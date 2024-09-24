@@ -1,0 +1,22 @@
+/* Change the text color in the sidebar */
+.wy-nav-side .wy-side-nav-search .icon,
+.wy-nav-side .wy-side-nav-search .wy-menu-vertical a {
+    color: #366FBF; /* Change this to blue */
+}
+
+/* Change only the logo area background color */
+.wy-side-nav-search {
+    background-color: #f0f0f0; /* White */
+}
+
+/* Change the color of the text in the logo area */
+.wy-nav-side .wy-side-nav-search .logo-text,
+.wy-nav-side .wy-side-nav-search .version {
+    color: #366FBF; /* Ciel color */
+}
+
+/* Increase the size of the logo */
+.wy-nav-side .wy-side-nav-search .logo img {
+    max-height: 1000px; /* Adjust the height as needed */
+    width: auto;       /* Maintain aspect ratio */
+}
