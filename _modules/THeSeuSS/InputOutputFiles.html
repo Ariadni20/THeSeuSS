@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.InputOutputFiles &mdash; THeSeuSS 0.0.post86 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8775217d"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post86
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.InputOutputFiles</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.InputOutputFiles</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Preparation of inputs for cell and geometry optimization / single point calculations&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">InputsPreparation</span> <span class="k">as</span> <span class="n">inputs</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">Constants</span> <span class="k">as</span> <span class="n">c</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">CheckPeriodicvsNonPeriodic</span> <span class="k">as</span> <span class="n">pervsnonper</span>
+<span class="kn">import</span> <span class="nn">hsd</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+
+<div class="viewcode-block" id="InputsGenerator">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.InputOutputFiles.InputsGenerator">[docs]</a>
+<span class="k">class</span> <span class="nc">InputsGenerator</span><span class="p">:</span>
+
+    <span class="n">GEOMETRY_IN</span> <span class="o">=</span> <span class="s1">&#39;geometry.in&#39;</span>
+    <span class="n">GEO_GEN</span> <span class="o">=</span> <span class="s1">&#39;geo.gen&#39;</span>
+    <span class="n">SO3LR_GEN</span> <span class="o">=</span> <span class="s1">&#39;so3lr.xyz&#39;</span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Generation of FHIaims and DFTB+ inputs.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    code : str</span>
+<span class="sd">        Code</span>
+<span class="sd">    kpoints: str </span>
+<span class="sd">        K-points (Three values: they are converted to integer)</span>
+<span class="sd">    functional: str</span>
+<span class="sd">        Functional (FHIaims)</span>
+<span class="sd">    eev: str</span>
+<span class="sd">        Convergence criterion for the self-consistency cycle, based on the sum of eigenvalues (FHIaims)</span>
+<span class="sd">    rho: str</span>
+<span class="sd">        Convergence criterion for the self-consistency cycle, based on the charge density (FHIaims)</span>
+<span class="sd">    etot: str</span>
+<span class="sd">        Convergence criterion for the self-consistency cycle, based on the total energy (FHIaims)</span>
+<span class="sd">    forces: str</span>
+<span class="sd">        Convergence criterion for the self-consistency cycle, based on energy derivatives/forces (FHIaims)</span>
+<span class="sd">    sc_iter_limit: str</span>
+<span class="sd">        Maximum number of s.c.f. cycles before a calculation is considered and abandoned (FHIaims)</span>
+<span class="sd">    species: str</span>
+<span class="sd">        Species defaults settings; basis set, integration grids, accuracy of the Hartree potential (FHIaims)</span>
+<span class="sd">    frequencies: bool</span>
+<span class="sd">    geometry: str</span>
+<span class="sd">        Maximum residual force component per atom, below which the geometry relaxation is considered converged (geometry relaxation) (FHIaims)</span>
+<span class="sd">    energy: str</span>
+<span class="sd">        Energy amount by which a relaxation step can move upwards and is still accepted (FHIaims)</span>
+<span class="sd">    steps: str</span>
+<span class="sd">        Maximum number of steps after which a structure optimization will be aborted (FHIaims)</span>
+<span class="sd">    pol_grid: str</span>
+<span class="sd">        Polarization grid</span>
+<span class="sd">    max_force_component: str / converted to float</span>
+<span class="sd">        Optimization is stopped, if the force component with the maximal absolute value goes below this value (DFTB+)</span>
+<span class="sd">    max_steps: str</span>
+<span class="sd">        Maximum number of steps after which the optimization should stop (DFTB+)</span>
+<span class="sd">    SCC_tolerance: str</span>
+<span class="sd">        Stopping criteria for the scc. Tolerance for the maximum difference in any charge between two scc cycles (DFTB+)</span>
+<span class="sd">    max_SCC_iterations: str</span>
+<span class="sd">        Maximal number of scc cycles to reach convergence (DFTB+)</span>
+<span class="sd">    output_file: str</span>
+<span class="sd">        Output file</span>
+<span class="sd">    dispersion: bool</span>
+<span class="sd">    path: str</span>
+<span class="sd">        Path of the directory from which the code has been executed</span>
+<span class="sd">    package_path: str</span>
+<span class="sd">        Path of the directory where the code is located</span>
+<span class="sd">    dispersion_type: str</span>
+<span class="sd">        Dispersion type (MBD_NL or TS)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">kpoints</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">eev</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rho</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">etot</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">forces</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sc_iter_limit</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">species</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">frequencies</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">geometry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">energy</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">steps</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pol_grid</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_force_component</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_steps</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">SCC_tolerance</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_SCC_iterations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dispersion_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span> <span class="o">=</span> <span class="n">kpoints</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eev</span> <span class="o">=</span> <span class="n">eev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">etot</span> <span class="o">=</span> <span class="n">etot</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forces</span> <span class="o">=</span> <span class="n">forces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sc_iter_limit</span> <span class="o">=</span> <span class="n">sc_iter_limit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">species</span> <span class="o">=</span> <span class="n">species</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span> <span class="o">=</span> <span class="n">frequencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy</span> <span class="o">=</span> <span class="n">energy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span> <span class="o">=</span> <span class="n">pol_grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_force_component</span> <span class="o">=</span> <span class="n">max_force_component</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span> <span class="o">=</span> <span class="n">max_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SCC_tolerance</span> <span class="o">=</span> <span class="n">SCC_tolerance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_SCC_iterations</span> <span class="o">=</span> <span class="n">max_SCC_iterations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">=</span> <span class="n">dispersion_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">species_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">package_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">species_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drct_existance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_GeometryProcessor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_periodicity</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_coord_directories_existence</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_periodicity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup PeriodicvsNonPeriodic class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">check_periodic_non_periodic</span> <span class="o">=</span> <span class="n">pervsnonper</span><span class="o">.</span><span class="n">PeriodicvsNonPeriodic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="n">check_periodic_non_periodic</span><span class="o">.</span><span class="n">check_periodic_vs_non_periodic</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_set_GeometryProcessor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup the GeometryProcessor class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">InputsGenerator</span><span class="o">.</span><span class="n">GEOMETRY_IN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">InputsGenerator</span><span class="o">.</span><span class="n">GEO_GEN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">InputsGenerator</span><span class="o">.</span><span class="n">SO3LR_GEN</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">GeometryProcessor</span><span class="p">(</span><span class="n">geom_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_atom_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns both the atom type for each atom </span>
+<span class="sd">        and a corresponding numerical identifier for each atom type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">read_the_atom_type</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_print_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Outputs the results of the code execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39; </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1"> &#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_print_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints a section header for the input parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;* </span><span class="si">{</span><span class="n">pattern</span><span class="si">}</span><span class="s1"> *&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="n">width</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_coord_directories_existence</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks for the existence of directories starting with &quot;Coord&quot; in the current directory.</span>
+<span class="sd">        It is used in order to decide in the control.in input file of FHIaims if the commands</span>
+<span class="sd">        for the calculation of polarizability and dipole moment will be added. It is only for non_periodic systems.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">path_dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="s1">&#39;geometry.in.supercell&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">path_dst</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="s1">&#39;geo.genS&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_dst</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drct_existance</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drct_existance</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="InputsGenerator.FHIaims_control_file">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.InputOutputFiles.InputsGenerator.FHIaims_control_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">FHIaims_control_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the control input file of FHIaims.</span>
+<span class="sd">    </span>
+<span class="sd">        number_atype: int, list</span>
+<span class="sd">            The number of each atom within the crystal structure</span>
+<span class="sd">        atype: str, list</span>
+<span class="sd">            The atom type of each atom within the crystal structure</span>
+<span class="sd">        unique_atype: str, list</span>
+<span class="sd">            The atom types present in the crystal structure (appearing only once)</span>
+<span class="sd">        input_parameters: dict</span>
+<span class="sd">            It stores the parameters found in the control file and is utilized to display the input information in the output</span>
+<span class="sd">        species_path_updated: str</span>
+<span class="sd">            Directory path where the species defaults settings are located</span>
+<span class="sd">        path_of_file_atype: str</span>
+<span class="sd">            Path of the species defaults of an atom type</span>
+<span class="sd">        source_data: str</span>
+<span class="sd">            Data of the species defaults of an atom type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">number_atype</span><span class="p">,</span> <span class="n">atype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_atom_type</span><span class="p">()</span>
+        <span class="n">unique_atype</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">OrderedDict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">atype</span><span class="p">))</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">control_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s1">&#39;xc </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;sc_accuracy_eev </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eev</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;sc_accuracy_rho </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;sc_accuracy_etot </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">etot</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;sc_accuracy_forces </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">forces</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;sc_iter_limit </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sc_iter_limit</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;FUNCTIONAL:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">,</span>
+                <span class="s1">&#39;CONVERGENCE CRITERION FOR THE SELF-CONSISTENCY CYCLE, BASED ON THE SUM OF EIGENVALUES:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">eev</span><span class="p">,</span>
+                <span class="s1">&#39;CONVERGENCE CRITERION FOR THE SELF-CONSISTENCY CYCLE, BASED ON THE CHARGE DENSITY:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">,</span>
+                <span class="s1">&#39;CONVERGENCE CRITERION FOR THE SELF-CONSISTENCY CYCLE, BASED ON THE TOTAL ENERGY:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">etot</span><span class="p">,</span>
+                <span class="s1">&#39;CONVERGENCE CRITERION FOR THE SELF-CONSISTENCY CYCLE, BASED ON ENERGY DERIVATIVES (&quot;FORCES&quot;):&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">forces</span><span class="p">,</span>
+                <span class="s1">&#39;MAXIMUM NUMBER OF S.C.F. CYCLES BEFORE A CALCULATION IS CONSIDERED AND ABANDONED:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sc_iter_limit</span><span class="p">,</span>
+                <span class="s1">&#39;SPECIES DEFAULTS SETTINGS (BASIS SET, INTEGRATION GRIDS, ACCURACY OF THE HARTREE POTENTIAL):&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span>
+                <span class="p">}</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;k_grid </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;k_offset 0.5 0.5 0.5</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;relativistic atomic_zora scalar</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;k_grid </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;relativistic atomic_zora scalar</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;K-POINTS:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;MBDNL&#39;</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;many_body_dispersion_nl</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="p">])</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;vdw_correction_hirshfeld</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="p">])</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;relax_geometry bfgs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;energy_tolerance </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;max_relaxation_steps </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;relax_geometry bfgs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;energy_tolerance </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;max_relaxation_steps </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="sa">f</span><span class="s1">&#39;relax_unit_cell full</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="p">])</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;MAXIMUM RESIDUAL FORCE COMPONENT PER ATOM (in eV/A) BELOW WHICH THE GEOMETRY RELAXATION IS CONSIDERED CONVERGED (GEOMETRY RELAXATION):&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;ENERGY AMOUNT BY WHICH A RELAXATION STEP CAN MOVE UPWARDS AND IS STILL ACCEPTED:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;MAXIMUM NUMBER OF STEPS AFTER WHICH A STRUCTURE OPTIMIZATION WILL BE ABORTED:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s1">&#39;Cell and geometry optimization input parameters&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                    <span class="sa">f</span><span class="s1">&#39;compute_forces .true.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="sa">f</span><span class="s1">&#39;final_forces_cleaned .true.</span><span class="se">\n</span><span class="s1">&#39;</span>
+                    <span class="sa">f</span><span class="s1">&#39;KS_method serial</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="p">])</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drct_existance</span><span class="p">:</span>    
+                        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                            <span class="sa">f</span><span class="s1">&#39;output dipole</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                            <span class="p">])</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s1">&#39;Single point calculation input parameters - Forces - Dipole moment - Polarizability&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">grid0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">grid1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">grid2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+
+                        <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                            <span class="sa">f</span><span class="s1">&#39;output polarization 1 </span><span class="si">{</span><span class="n">grid0</span><span class="si">}</span><span class="s1"> 1 1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s1">&#39;output polarization 2 1 </span><span class="si">{</span><span class="n">grid1</span><span class="si">}</span><span class="s1"> 1</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="sa">f</span><span class="s1">&#39;output polarization 3 1 1 </span><span class="si">{</span><span class="n">grid2</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                            <span class="p">])</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;POLARIZATION GRID:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s1">&#39;Single point calculation input parameters - Forces - Cartesian Polarization - Polarizability&#39;</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">drct_existance</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>    
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;DFPT polarizability</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol_grid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+                        <span class="sa">f</span><span class="s1">&#39;DFPT dielectric</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+                        <span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+            <span class="n">fh</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+        <span class="n">species_path_updated</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">package_path</span><span class="p">,</span> <span class="s1">&#39;species_defaults&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">species</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">unique_atype</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">species_path_updated</span><span class="p">):</span>
+                <span class="n">species_type</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="n">species_type</span><span class="p">):</span>
+                    <span class="n">path_of_file_atype</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">species_path_updated</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_of_file_atype</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source_file</span><span class="p">:</span>
+                        <span class="n">source_data</span> <span class="o">=</span> <span class="n">source_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">control_file</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">target_file</span><span class="p">:</span>
+                        <span class="n">target_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">source_data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_dict_to_hsd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the necessary information in the correct format for DFTB+ to read the data specified in GenFormat/Geometry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">hsd</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;Geometry&quot;</span><span class="p">:</span>            
+                    <span class="n">hsd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> </span><span class="se">{{</span><span class="s2">&quot;</span>
+                    <span class="n">hsd</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict_to_hsd</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;GenFormat&quot;</span><span class="p">:</span>
+                    <span class="n">hsd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> </span><span class="se">{{\n</span><span class="s2">&quot;</span>
+                    <span class="n">hsd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; &lt;&lt;&lt;&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="n">hsd</span> <span class="o">+=</span> <span class="s2">&quot;}}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">hsd</span>
+
+<div class="viewcode-block" id="InputsGenerator.DFTB_parameters_input_file">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.InputOutputFiles.InputsGenerator.DFTB_parameters_input_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">DFTB_parameters_input_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dftb_in_file</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the dftb_in.hsd input file of DFTB+</span>
+
+<span class="sd">        species_path_updated: str</span>
+<span class="sd">            Directory path where the .skf files are located</span>
+<span class="sd">        data: dict</span>
+<span class="sd">            It stores the parameters found in the dftb_in.hsd file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">species_path_updated</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">package_path</span><span class="p">,</span> <span class="s1">&#39;3ob-3-1&#39;</span><span class="p">)</span>
+
+        <span class="n">number_atom_type</span><span class="p">,</span> <span class="n">atom_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_atom_type</span><span class="p">()</span>
+        <span class="n">atype_unique_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">OrderedDict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">atom_type</span><span class="p">))</span>
+
+        <span class="n">costants_initialization</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ConstantsSpectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="n">hubbard_derivates</span> <span class="o">=</span> <span class="n">costants_initialization</span><span class="o">.</span><span class="n">hubbard_derivates_dict</span><span class="p">()</span>
+        <span class="n">max_angular_mom</span> <span class="o">=</span> <span class="n">costants_initialization</span><span class="o">.</span><span class="n">max_angular_mom_dict</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="n">kpoint0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">kpoint1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">kpoint2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="n">value0</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">kpoint0</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">value1</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">kpoint1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="n">value2</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">kpoint2</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_force_component</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;Geometry&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;GenFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;geo.gen&quot;</span>
+                <span class="p">},</span>
+                <span class="s1">&#39;Driver&#39;</span><span class="p">:</span> 
+                    <span class="p">{</span><span class="s1">&#39;ConjugateGradient&#39;</span><span class="p">:</span> 
+                        <span class="p">{</span><span class="s1">&#39;MovedAtoms&#39;</span><span class="p">:</span> <span class="s1">&#39;1:-1&#39;</span><span class="p">,</span> 
+                        <span class="s1">&#39;MaxForceComponent&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_force_component</span><span class="p">),</span> 
+                        <span class="s1">&#39;MaxSteps&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span> 
+                        <span class="s1">&#39;OutputPrefix&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">}},</span> 
+                <span class="s1">&#39;Hamiltonian&#39;</span><span class="p">:</span> 
+                    <span class="p">{</span><span class="s1">&#39;DFTB&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;SCC&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="s1">&#39;SCCTolerance&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCC_tolerance</span><span class="p">,</span> 
+                        <span class="s1">&#39;MaxSCCIterations&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_SCC_iterations</span><span class="p">,</span> 
+                        <span class="s1">&#39;SlaterKosterFiles&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Type2FileNames&#39;</span><span class="p">:</span> 
+                            <span class="p">{</span><span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">species_path_updated</span><span class="si">}</span><span class="s1">/&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;Separator&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;-&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;Suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;.skf&quot;&#39;</span><span class="p">}},</span> 
+                        <span class="s1">&#39;MaxAngularMomentum&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">max_angular_mom</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atype_unique_list</span><span class="p">},</span>
+                        <span class="s1">&#39;ThirdOrderFull&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="s1">&#39;HCorrection&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Damping&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Exponent&#39;</span><span class="p">:</span> <span class="mf">4.05</span><span class="p">}},</span> 
+                        <span class="s1">&#39;HubbardDerivs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">hubbard_derivates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atype_unique_list</span><span class="p">}}},</span> 
+                <span class="s1">&#39;Options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;WriteResultsTag&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> 
+                <span class="s1">&#39;Analysis&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;PrintForces&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}}</span> 
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;OPTIMIZATION IS STOPPED, IF THE FORCE COMPONENT WITH THE MAXIMAL ABSOLUTE VALUE GOES BELOW:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_force_component</span><span class="p">,</span>
+                <span class="s1">&#39;MAXIMUM NUMBER OF STEPS AFTER WHICH THE OPTIMIZATION SHOULD STOP:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_steps</span><span class="p">,</span>
+                <span class="s1">&#39;STOPPING CRITERIA FOR THE SCC. TOLERANCE FOR THE MAXIMUM DIFFERENCE IN ANY CHARGE BETWEEN TWO SCC CYCLES:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCC_tolerance</span><span class="p">,</span>
+                <span class="s1">&#39;MAXIMAL NUMBER OF SCC CYCLES TO REACH CONVERGENCE:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_SCC_iterations</span>
+                    <span class="p">}</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;MBD&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MBD&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;KGrid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;Beta&#39;</span><span class="p">:</span> <span class="mf">0.83</span><span class="p">}}</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TS&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;RangeSeparation&#39;</span><span class="p">:</span> <span class="mf">0.94</span><span class="p">}}</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;DISPERSION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;KPointsAndWeights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SuperCellFolding&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="n">kpoint0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">kpoint1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">kpoint2</span><span class="p">],</span> <span class="p">[</span><span class="n">value0</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">]]}</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Driver&#39;</span><span class="p">][</span><span class="s1">&#39;ConjugateGradient&#39;</span><span class="p">][</span><span class="s1">&#39;LatticeOpt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;K-POINTS:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span>
+                
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s1">&#39;Optimization input parameters&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;Geometry&#39;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;GenFormat&quot;</span><span class="p">:</span> <span class="s2">&quot;geo.gen&quot;</span>
+                <span class="p">},</span>
+                <span class="s1">&#39;Hamiltonian&#39;</span><span class="p">:</span> 
+                    <span class="p">{</span><span class="s1">&#39;DFTB&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;SCC&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="s1">&#39;SCCTolerance&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCC_tolerance</span><span class="p">,</span> 
+                        <span class="s1">&#39;MaxSCCIterations&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_SCC_iterations</span><span class="p">,</span> 
+                        <span class="s1">&#39;SlaterKosterFiles&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Type2FileNames&#39;</span><span class="p">:</span> 
+                            <span class="p">{</span><span class="s1">&#39;Prefix&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">species_path_updated</span><span class="si">}</span><span class="s1">/&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;Separator&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;-&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;Suffix&#39;</span><span class="p">:</span> <span class="s1">&#39;&quot;.skf&quot;&#39;</span><span class="p">}},</span> 
+                        <span class="s1">&#39;MaxAngularMomentum&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">max_angular_mom</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atype_unique_list</span><span class="p">},</span>
+                        <span class="s1">&#39;ThirdOrderFull&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> 
+                        <span class="s1">&#39;HCorrection&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Damping&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Exponent&#39;</span><span class="p">:</span> <span class="mf">4.05</span><span class="p">}},</span> 
+                        <span class="s1">&#39;HubbardDerivs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">hubbard_derivates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atype_unique_list</span><span class="p">}}},</span> 
+                <span class="s1">&#39;Options&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;WriteResultsTag&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span> 
+                <span class="s1">&#39;Analysis&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;PrintForces&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;Polarisability&#39;</span><span class="p">:</span> <span class="p">{}}}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;STOPPING CRITERIA FOR THE SCC. TOLERANCE FOR THE MAXIMUM DIFFERENCE IN ANY CHARGE BETWEEN TWO SCC CYCLES:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCC_tolerance</span><span class="p">,</span>
+                <span class="s1">&#39;MAXIMAL NUMBER OF SCC CYCLES TO REACH CONVERGENCE:&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_SCC_iterations</span>
+                    <span class="p">}</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;MBD&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;MBD&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;KGrid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;Beta&#39;</span><span class="p">:</span> <span class="mf">0.83</span><span class="p">}}</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span> <span class="o">==</span> <span class="s1">&#39;TS&#39;</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;Dispersion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;TS&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;RangeSeparation&#39;</span><span class="p">:</span> <span class="mf">0.94</span><span class="p">}}</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Analysis&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;PrintForces&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;DISPERSION&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion_type</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Hamiltonian&#39;</span><span class="p">][</span><span class="s1">&#39;DFTB&#39;</span><span class="p">][</span><span class="s1">&#39;KPointsAndWeights&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SuperCellFolding&#39;</span><span class="p">:</span> <span class="p">[[</span><span class="n">kpoint0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">kpoint1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">kpoint2</span><span class="p">],</span> <span class="p">[</span><span class="n">value0</span><span class="p">,</span> <span class="n">value1</span><span class="p">,</span> <span class="n">value2</span><span class="p">]]}</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">input_parameters</span><span class="p">[</span><span class="s1">&#39;K-POINTS:&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kpoints</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_header</span><span class="p">(</span><span class="s1">&#39;Single point calculation&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_print_output</span><span class="p">()</span>
+
+        <span class="n">hsd_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dict_to_hsd</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">data_without_genformat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">data_without_genformat</span><span class="p">[</span><span class="s2">&quot;Geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;GenFormat&quot;</span><span class="p">)</span>
+        <span class="n">data_without_genformat</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Geometry&quot;</span><span class="p">)</span>
+
+        <span class="n">hsd</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data_without_genformat</span><span class="p">,</span> <span class="s2">&quot;output1.hsd&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dftb_in_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hsd_file</span><span class="p">:</span>
+            <span class="n">hsd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">hsd_content</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;output1.hsd&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hsd_file1</span><span class="p">:</span>
+            <span class="n">content_to_append</span> <span class="o">=</span> <span class="n">hsd_file1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dftb_in_file</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hsd_file</span><span class="p">:</span>
+            <span class="n">hsd_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content_to_append</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;output1.hsd&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InputsGenerator.file_exists">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.InputOutputFiles.InputsGenerator.file_exists">[docs]</a>
+    <span class="k">def</span> <span class="nf">file_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks the existence of input files required for cell and geometry optimization in FHI-aims or DFTB+ calculations. </span>
+<span class="sd">        If the file does not exist, it generates the required input file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;control.in&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE CONTROL FILE (input of FHI-aims) FOR OPTIMIZATION ALREADY EXISTS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">path_sub</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;control.in&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">FHIaims_control_file</span><span class="p">(</span><span class="n">path_sub</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE CONTROL FILE (input of FHI-aims) FOR OPTIMIZATION HAS BEEN GENERATED</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE CONTROL FILE GENERATION WAS NOT SUCCESSFUL / AN ERROR WAS OCCURED: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s1">&#39;dftb_in.hsd&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE dftb_in.hsd FILE (input of DFTB+) FOR OPTIMIZATION ALREADY EXISTS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">path_sub</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;dftb_in.hsd&#39;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">DFTB_parameters_input_file</span><span class="p">(</span><span class="n">path_sub</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE dftb_in.hsd FILE (input of DFTB+) FOR OPTIMIZATION HAS BEEN GENERATED</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE dftb_in.hsd FILE GENERATION WAS NOT SUCCESSFUL / AN ERROR WAS OCCURED: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

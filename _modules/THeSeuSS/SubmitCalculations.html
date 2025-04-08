@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.SubmitCalculations &mdash; THeSeuSS 0.0.post72 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=0e8682e5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post72
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.SubmitCalculations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.SubmitCalculations</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Submission of FHI-aims and PHONOPY calculations&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">concurrent.futures</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">InputsPreparation</span> <span class="k">as</span> <span class="n">inputs</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">FiniteDisplacements_phonopy</span> <span class="k">as</span> <span class="n">finitedisps</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">EigenvectorsFrequenciesPHONOPY</span> <span class="k">as</span> <span class="n">eigenfreq</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">Restart</span> <span class="k">as</span> <span class="n">restart</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span> <span class="nn">phonopy</span> <span class="kn">import</span> <span class="n">Phonopy</span>
+<span class="kn">from</span> <span class="nn">phonopy.interface.calculator</span> <span class="kn">import</span> <span class="n">read_crystal_structure</span><span class="p">,</span> <span class="n">write_crystal_structure</span><span class="p">,</span> <span class="n">write_supercells_with_displacements</span><span class="p">,</span> <span class="n">get_default_displacement_distance</span>
+<span class="kn">from</span> <span class="nn">phonopy.file_IO</span> <span class="kn">import</span> <span class="n">write_FORCE_SETS</span><span class="p">,</span> <span class="n">write_FORCE_CONSTANTS</span>
+<span class="kn">from</span> <span class="nn">phonopy.phonon.band_structure</span> <span class="kn">import</span> <span class="n">get_band_qpoints_and_path_connections</span>
+
+
+
+<div class="viewcode-block" id="PhonopyCalculator">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator">[docs]</a>
+<span class="k">class</span> <span class="nc">PhonopyCalculator</span><span class="p">:</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cell_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file_of_SCFSs</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="n">cell_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_of_SCFSs</span> <span class="o">=</span> <span class="n">output_file_of_SCFSs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forces</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamical_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigvecs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigvals</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_geometry_processor</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_read_crystal_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the crystal structure file based on the specified code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">read_crystal_structure</span><span class="p">(</span><span class="s1">&#39;vibrations/geometry.in&#39;</span><span class="p">,</span> <span class="n">interface_mode</span><span class="o">=</span><span class="s1">&#39;aims&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">read_crystal_structure</span><span class="p">(</span><span class="s1">&#39;vibrations/geo.gen&#39;</span><span class="p">,</span> <span class="n">interface_mode</span><span class="o">=</span><span class="s1">&#39;dftbp&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_setup_phonopy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up Phonopy for phonon calculations.</span>
+<span class="sd">        Reads the crystal structure and extracts the unit cell and optional structure info. </span>
+<span class="sd">        Initializes a Phonopy object with the unit cell and supercell matrix. </span>
+<span class="sd">        Generates atomic displacements using default distances specific to the code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">unitcell</span><span class="p">,</span> <span class="n">optional_structure_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_crystal_structure</span><span class="p">()</span>
+        <span class="n">cell_dims_int</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="n">supercell_matrix</span> <span class="o">=</span> <span class="p">[[</span><span class="n">cell_dims_int</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">cell_dims_int</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cell_dims_int</span><span class="p">[</span><span class="mi">2</span><span class="p">]]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span> <span class="o">=</span> <span class="n">Phonopy</span><span class="p">(</span><span class="n">unitcell</span><span class="p">,</span><span class="n">supercell_matrix</span><span class="p">)</span>
+        <span class="n">default_displacement_for_code</span> <span class="o">=</span> <span class="n">get_default_displacement_distance</span><span class="p">(</span><span class="n">interface_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">generate_displacements</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="n">default_displacement_for_code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">displacements</span>
+
+<div class="viewcode-block" id="PhonopyCalculator.supercell_disp_PHONOPY">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.supercell_disp_PHONOPY">[docs]</a>
+    <span class="k">def</span> <span class="nf">supercell_disp_PHONOPY</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the supercells with atomic displacements generated by Phonopy and the supercell. </span>
+<span class="sd">        Writes the supercells with displacements to output files based on the code.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_phonopy</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">supercells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">supercells_with_displacements</span>
+        <span class="n">gen_supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">supercell</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">write_supercells_with_displacements</span><span class="p">(</span><span class="s1">&#39;aims&#39;</span><span class="p">,</span> <span class="n">gen_supercell</span><span class="p">,</span> <span class="n">supercells</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">write_supercells_with_displacements</span><span class="p">(</span><span class="s1">&#39;dftbp&#39;</span><span class="p">,</span> <span class="n">gen_supercell</span><span class="p">,</span> <span class="n">supercells</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.submit_phonopy_displacements">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.submit_phonopy_displacements">[docs]</a>
+    <span class="k">def</span> <span class="nf">submit_phonopy_displacements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate structures with displacements using PHONOPY. If successful, it prints a confirmation message. </span>
+<span class="sd">        If an error occurs it prints an error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">supercell_disp_PHONOPY</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;PHONOPY GENERATED THE STRUCTURES WITH THE DISPLACEMENTS</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span> 
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;GENERATION OF THE STRUCTURES WITH THE DISPLACEMENTS BY PHONOPY / AN ERROR WAS OCCURED: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span> </div>
+
+
+    <span class="k">def</span> <span class="nf">_setup_geometry_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the number of atoms in the supercell based on the code, by initializing GeometryProcessor object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="s1">&#39;geometry.in.supercell&#39;</span><span class="p">)</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">new_path</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="s1">&#39;geo.genS&#39;</span><span class="p">)</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">new_path</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">GeometryProcessor</span><span class="p">(</span><span class="n">geom_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_number_of_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of atoms in the supercell based on the code. Used for both periodic and non periodic systems.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">number_of_atoms</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_coordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the coordinates of the supercell based on the code. Used for both periodic and non periodic systems.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">read_coordinates</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PhonopyCalculator.read_forces_from_output">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.read_forces_from_output">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_forces_from_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts the forces from the FHIaims output and results.tag DFTB+ file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_atoms</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">forces_identifier</span> <span class="o">=</span> <span class="s1">&#39;Total atomic forces (unitary forces cleaned)&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">forces_identifier</span> <span class="o">=</span> <span class="s1">&#39;forces&#39;</span>
+
+        <span class="n">f</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">found_unique_line</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">forces_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">forces_identifier</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">found_unique_line</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">found_unique_line</span><span class="p">:</span>
+                <span class="n">forces_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">forces_lines</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[-+]?\d+\.\d+E[-+]?\d+&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">forces</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">forces_lines</span><span class="p">:</span>
+            <span class="n">numbers</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">last_three_columns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">forces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">last_three_columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forces</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.sort_directories">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.sort_directories">[docs]</a>
+    <span class="k">def</span> <span class="nf">sort_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sorts directories in the current directory that contain the substring &#39;Coord&#39;, </span>
+<span class="sd">        based on the numeric value in their names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">item</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Coord&#39;</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">conts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">,</span> <span class="n">f</span><span class="p">))))</span>
+    
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conts</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.force_identifier">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.force_identifier">[docs]</a>
+    <span class="k">def</span> <span class="nf">force_identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drct</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs the path to the output file containing forces for a specific calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drct</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file_of_SCFSs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drct</span><span class="p">,</span> <span class="s1">&#39;results.tag&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.disp_forces_dataset_dyn_matrix">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.disp_forces_dataset_dyn_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">disp_forces_dataset_dyn_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a dataset for producing the force constants and calculating the dynamical matrix </span>
+<span class="sd">        based on displacements and forces obtained from FHIaims or DFTB+ output files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_number_of_atoms</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;natom&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">,</span>
+                <span class="s1">&#39;first_atoms&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_phonopy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_directories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disps</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">conts</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">force_identifier</span><span class="p">(</span><span class="n">jj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_forces_from_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forces_path</span><span class="p">)</span>
+            <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+                    <span class="s1">&#39;displacement&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
+                    <span class="s1">&#39;forces&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forces</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;first_atoms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">produce_force_constants</span><span class="p">()</span>
+
+        <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dynamical_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">get_dynamical_matrix_at_q</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dynamical_matrix</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.animate_eigenvectors">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.animate_eigenvectors">[docs]</a>
+    <span class="k">def</span> <span class="nf">animate_eigenvectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates the xyz_jmol file to animate the vibrations using jmol package.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">dyn_mat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disp_forces_dataset_dyn_matrix</span><span class="p">()</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">anime_type</span><span class="o">=</span><span class="s1">&#39;jmol&#39;</span>
+        <span class="n">band_index</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">amplitude</span><span class="o">=</span><span class="mi">5</span>
+        <span class="n">num_div</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">shift</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;anime.xyz&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">write_animation</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">anime_type</span><span class="p">,</span> <span class="n">band_index</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">num_div</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PhonopyCalculator.plot_band_structure">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.PhonopyCalculator.plot_band_structure">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_band_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plots the band structure using predefined paths in reciprocal space.</span>
+<span class="sd">        Uses Phonopy to calculate and visualize the band structure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]],</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]],</span>
+                <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Gamma$&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Gamma$&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;$C_</span><span class="si">{2}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="s2">&quot;$Y_</span><span class="si">{2}</span><span class="s2">$&quot;</span><span class="p">,</span> <span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Gamma$&quot;</span><span class="p">]</span>
+        <span class="n">qpoints</span><span class="p">,</span> <span class="n">connections</span> <span class="o">=</span> <span class="n">get_band_qpoints_and_path_connections</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">npoints</span><span class="o">=</span><span class="mi">51</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">run_band_structure</span><span class="p">(</span><span class="n">qpoints</span><span class="p">,</span> <span class="n">path_connections</span><span class="o">=</span><span class="n">connections</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">plot_band_structure</span><span class="p">()</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;phonon_band_structure.pdf&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">write_yaml_band_structure</span><span class="p">()</span>
+        <span class="n">band_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonon</span><span class="o">.</span><span class="n">get_band_structure_dict</span><span class="p">()</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="Calculator">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.Calculator">[docs]</a>
+<span class="k">class</span> <span class="nc">Calculator</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+
+<div class="viewcode-block" id="Calculator.submit_job">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.Calculator.submit_job">[docs]</a>
+    <span class="k">def</span> <span class="nf">submit_job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Submission of electronic structure calculations, (FHIaims and DFTB+).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">number_of_cores</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_cores&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">number_of_cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_cores</span><span class="p">)</span>
+            <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">number_of_cores</span><span class="p">)</span>  <span class="c1"># Adjust the number of threads as needed</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF CORES ALLOCATED FOR GEOMETRY OPTIMIZATION: </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="n">first_part</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">last_part</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_threads</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF CORES: </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span> 
+                <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">first_part</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">command_tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span>
+        
+        <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command_tmp</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s1">&#39;/bin/bash&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Calculator.frozen_phonon_approximation_drct">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.Calculator.frozen_phonon_approximation_drct">[docs]</a>
+    <span class="k">def</span> <span class="nf">frozen_phonon_approximation_drct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a directory to store files associated with the frozen phonon approximation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_geometry_flag</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">):</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="s1">&#39;geometry.in&#39;</span>
+            <span class="n">new_geometry</span> <span class="o">=</span> <span class="s1">&#39;geometry.in.next_step&#39;</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">):</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="s1">&#39;geo.gen&#39;</span>
+            <span class="n">new_geometry</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="si">}</span><span class="s1">.gen&#39;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">path_new_geom_input</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">new_geometry</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_new_geom_input</span><span class="p">):</span>
+            <span class="n">geometry_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">new_geometry</span><span class="p">)</span>
+            <span class="n">new_geometry_flag</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">geometry_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">geometry_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>  
+
+        <span class="k">if</span> <span class="n">new_geometry_flag</span><span class="p">:</span>
+            <span class="n">geometry_path_rename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">geometry</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">geometry_path</span><span class="p">,</span> <span class="n">geometry_path_rename</span><span class="p">)</span> </div>
+
+
+<div class="viewcode-block" id="Calculator.run_command">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.Calculator.run_command">[docs]</a>
+    <span class="k">def</span> <span class="nf">run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes the given command in the shell environment and returns the output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Run the command and capture its output</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># Process the result as needed</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># Handle command failure</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Error running </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="Calculator.submit_jobs_in_parallel">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.SubmitCalculations.Calculator.submit_jobs_in_parallel">[docs]</a>
+    <span class="k">def</span> <span class="nf">submit_jobs_in_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Submits multiple jobs in parallel using a ThreadPoolExecutor.</span>
+<span class="sd">        Note: Adjust the number of threads based on the available computational resources and the number of folders.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">command_statement</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="n">rst</span> <span class="o">=</span> <span class="n">restart</span><span class="o">.</span><span class="n">RestartCalculation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">)</span>
+            <span class="n">not_completed_calcs</span> <span class="o">=</span> <span class="n">rst</span><span class="o">.</span><span class="n">directory_non_completed_calculations</span><span class="p">()</span>
+            <span class="n">no_of_folders</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_completed_calcs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+            <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+            <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">item</span><span class="p">))]</span>
+            <span class="n">conts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;Coord&#39;</span> <span class="ow">in</span> <span class="n">ii</span><span class="p">:</span>
+                    <span class="n">conts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+            <span class="n">conts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">,</span> <span class="n">f</span><span class="p">))))</span>
+            <span class="n">no_of_folders</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">conts</span><span class="p">)</span>
+
+        <span class="n">number_of_cores</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_cores&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">number_of_cores</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_cores</span><span class="p">)</span>
+            <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">number_of_cores</span><span class="o">/</span><span class="n">no_of_folders</span><span class="p">))</span>  <span class="c1"># Adjust the number of threads as needed</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF CORES ALLOCATED PER SINGLE POINT CALCULATION ASSOCIATED TO FINITE DIFFERENCE METHOD: </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)</span>
+            <span class="n">first_part</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">last_part</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">num_threads</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">num_threads</span> <span class="o">&lt;=</span> <span class="n">no_of_folders</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF CORES: </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">num_threads</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_threads</span><span class="o">/</span><span class="n">no_of_folders</span><span class="p">))</span>  <span class="c1"># Adjust the number of threads as needed</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF CORES ALLOCATED PER SINGLE POINT CALCULATION ASSOCIATED TO FINITE DIFFERENCE METHOD: </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">not_completed_calcs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span> 
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; </span><span class="si">{</span><span class="n">first_part</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">command_statement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tmp</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">conts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;;&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">:</span> 
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; </span><span class="si">{</span><span class="n">first_part</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">command_statement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tmp</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; cd polarizability; </span><span class="si">{</span><span class="n">first_part</span><span class="si">}</span><span class="s1">; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; cd polarizability; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="n">command_statement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tmp</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">number_of_cores</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; cd polarizability; srun --cpus-per-task 1 --ntasks </span><span class="si">{</span><span class="n">num_threads</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">last_part</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">command_tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cd vibrations; cd </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">; cd polarizability; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="n">command_statement</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command_tmp</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">num_threads</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+            <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_command</span><span class="p">,</span> <span class="n">command_statement</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

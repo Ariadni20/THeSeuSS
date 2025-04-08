@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.CheckSuccessOutput &mdash; THeSeuSS 0.0.post86 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8775217d"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post86
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.CheckSuccessOutput</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.CheckSuccessOutput</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;It checks if the single point calculations have been succesfully finished.&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<div class="viewcode-block" id="CheckOutputSuccess">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess">[docs]</a>
+<span class="k">class</span> <span class="nc">CheckOutputSuccess</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CheckOutputSuccess.single_successful_output">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.single_successful_output">[docs]</a>
+    <span class="k">def</span> <span class="nf">single_successful_output</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the cell and geometry optimization calculation has been successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The output file does not exist&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                    <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;Have a nice day.&#39;</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE OPTIMIZATION CALCULATION WAS NOT SUCCESSFUL \ PROBLEM DURING THE FHIAIMS CALCULATION</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">flag_exit</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE OPTIMIZATION CALCULATION WAS SUCCESSFUL</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">121</span><span class="p">)</span>
+                        <span class="n">flag_exit</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                    <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;DFTB+ running times&#39;</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE OPTIMIZATION CALCULATION WAS NOT SUCCESSFUL \ PROBLEM DURING THE DFTB+ CALCULATION</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="n">flag_exit</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE OPTIMIZATION CALCULATION WAS SUCCESSFUL</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">121</span><span class="p">)</span>
+                        <span class="n">flag_exit</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="n">flag_exit</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the folders that exist under a path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">item</span><span class="p">))]</span>
+
+    <span class="k">def</span> <span class="nf">_raise_output_not_exist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Raises a FileNotFoundError if the specified file does not exist in the directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OUTPUT FILE DOES NOT EXIST IN DIRECTORY.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_raise_output_not_successful</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Raises a ValueError if the pattern is not found in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;OUTPUT FILE DID NOT FINISH SUCCESSFULLY.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_success</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the file in the given directory exists and contains a pattern.</span>
+<span class="sd">        FileNotFoundError: If the file does not exist in the directory.</span>
+<span class="sd">        ValueError: If the file does not contain the pattern.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path_drct</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_drct</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path_drct</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_drct</span><span class="p">):</span> 
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_drct</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                        <span class="k">return</span> <span class="n">path_drct</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_output_not_exist</span><span class="p">(</span><span class="n">path_drct</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_output_not_successful</span><span class="p">(</span><span class="n">path_drct</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_success_pol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the file for polarizability calculation in the given directory exists and contains a specific pattern.</span>
+<span class="sd">        FileNotFoundError: If the file does not exist in the directory.</span>
+<span class="sd">        ValueError: If the file does not contain the specific pattern.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path_pol</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="s1">&#39;polarizability&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_pol</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">path_pol</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path_pol</span><span class="p">):</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_pol</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">():</span>
+                        <span class="k">return</span> <span class="n">path_pol</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_output_not_exist</span><span class="p">(</span><span class="n">path_pol</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_raise_output_not_successful</span><span class="p">(</span><span class="n">path_pol</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_successful_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span> 
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the single point calculations related to finite displacement method have been successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="n">not_completed_calculations</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_directories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">directory</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Coord&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                    <span class="n">path_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_success</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">path_output</span><span class="p">:</span>
+                        <span class="n">path_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path_output</span><span class="p">)</span>
+                        <span class="n">not_completed_calculations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_success</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">not_completed_calculations</span>
+
+    <span class="k">def</span> <span class="nf">_successful_output_dispersion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the single point calculations related to frozen phonon approximation as well as </span>
+<span class="sd">        polarizability calculations have been successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="n">not_completed_calculations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_directories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">directory</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Coord&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                    <span class="n">path_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_success</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">path_output</span><span class="p">:</span>
+                        <span class="n">path_out</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path_output</span><span class="p">)</span>
+                        <span class="n">not_completed_calculations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_out</span><span class="p">)</span>
+                    <span class="n">path_output_pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_success_pol</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">path_output_pol</span><span class="p">:</span>
+                        <span class="n">path_out_pol</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">path_output_pol</span><span class="p">)</span>
+                        <span class="n">not_completed_calculations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path_out_pol</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>    
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_success</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_check_success_pol</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">not_completed_calculations</span>
+
+<div class="viewcode-block" id="CheckOutputSuccess.check_for_success_calc_before_spectra">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.check_for_success_calc_before_spectra">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_for_success_calc_before_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks for successful completion of calculations before proceeding to spectra generation.</span>
+<span class="sd">        FileNotFoundError: If the file does not exist.</span>
+<span class="sd">        ValueError: If the file does not contain the expected patterns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                <span class="n">not_completed_calcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output</span><span class="p">(</span><span class="s1">&#39;Have a nice day.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output</span><span class="p">(</span><span class="s1">&#39;Have a nice day.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                <span class="n">not_completed_calcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output_dispersion</span><span class="p">(</span><span class="s1">&#39;Have a nice day.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output_dispersion</span><span class="p">(</span><span class="s1">&#39;Have a nice day.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                <span class="n">not_completed_calcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output</span><span class="p">(</span><span class="s1">&#39;DFTB+ running times&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output</span><span class="p">(</span><span class="s1">&#39;DFTB+ running times&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+                <span class="n">not_completed_calcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output_dispersion</span><span class="p">(</span><span class="s1">&#39;DFTB+ running times&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_successful_output_dispersion</span><span class="p">(</span><span class="s1">&#39;DFTB+ running times&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">not_completed_calcs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">not_completed_calcs</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

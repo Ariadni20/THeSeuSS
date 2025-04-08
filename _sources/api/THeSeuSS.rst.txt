@@ -1,0 +1,141 @@
+THeSeuSS package
+================
+
+Submodules
+----------
+
+THeSeuSS.CheckPeriodicvsNonPeriodic module
+------------------------------------------
+
+.. automodule:: THeSeuSS.CheckPeriodicvsNonPeriodic
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.CheckSuccessOutput module
+----------------------------------
+
+.. automodule:: THeSeuSS.CheckSuccessOutput
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.Constants module
+-------------------------
+
+.. automodule:: THeSeuSS.Constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.Coordinates module
+---------------------------
+
+.. automodule:: THeSeuSS.Coordinates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.EigenvectorsFrequenciesPHONOPY module
+----------------------------------------------
+
+.. automodule:: THeSeuSS.EigenvectorsFrequenciesPHONOPY
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.FiniteDisplacements\_phonopy module
+--------------------------------------------
+
+.. automodule:: THeSeuSS.FiniteDisplacements_phonopy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.GenerateDisplacementsMolecules module
+----------------------------------------------
+
+.. automodule:: THeSeuSS.GenerateDisplacementsMolecules
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.GeometryInputConversion module
+---------------------------------------
+
+.. automodule:: THeSeuSS.GeometryInputConversion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.IRRamanSpectra module
+------------------------------
+
+.. automodule:: THeSeuSS.IRRamanSpectra
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.InputOutputFiles module
+--------------------------------
+
+.. automodule:: THeSeuSS.InputOutputFiles
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.InputsPreparation module
+---------------------------------
+
+.. automodule:: THeSeuSS.InputsPreparation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.MapAtoms module
+------------------------
+
+.. automodule:: THeSeuSS.MapAtoms
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.PlotSpectra module
+---------------------------
+
+.. automodule:: THeSeuSS.PlotSpectra
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.Restart module
+-----------------------
+
+.. automodule:: THeSeuSS.Restart
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.SubmitCalculations module
+----------------------------------
+
+.. automodule:: THeSeuSS.SubmitCalculations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+THeSeuSS.TwoPointCentralDifference module
+-----------------------------------------
+
+.. automodule:: THeSeuSS.TwoPointCentralDifference
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: THeSeuSS
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.CheckPeriodicvsNonPeriodic &mdash; THeSeuSS 0.0.post86 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8775217d"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post86
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.CheckPeriodicvsNonPeriodic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.CheckPeriodicvsNonPeriodic</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Verifies whether the simulation of spectra is intended for a periodic or non-periodic system.&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">GeometryInputConversion</span> <span class="k">as</span> <span class="n">geominput</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">MapAtoms</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">GenerateDisplacementsMolecules</span> <span class="k">as</span> <span class="n">dispsmolecules</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">SubmitCalculations</span> <span class="k">as</span> <span class="n">submit</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">CheckSuccessOutput</span> <span class="k">as</span> <span class="n">check</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">EigenvectorsFrequenciesPHONOPY</span> <span class="k">as</span> <span class="n">eigenvec</span>
+
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic">[docs]</a>
+<span class="k">class</span> <span class="nc">PeriodicvsNonPeriodic</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cell_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">commands</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="n">cell_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spglib_processor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_conversion</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generated_displacements_mol</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_calculator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vibrational_freq</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigvecs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigvals</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialization_of_classes</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_specify_geometry_inputs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_periodic_vs_non_periodic</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_initialization_of_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes several classes that are needed for different aspects of the processing and submission workflow.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">spglib_processor</span> <span class="o">=</span> <span class="n">MapAtoms</span><span class="o">.</span><span class="n">spglibProcessor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span> <span class="o">=</span> <span class="n">submit</span><span class="o">.</span><span class="n">PhonopyCalculator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_conversion</span> <span class="o">=</span> <span class="n">geominput</span><span class="o">.</span><span class="n">GeometryConversion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">generated_displacements_mol</span> <span class="o">=</span> <span class="n">dispsmolecules</span><span class="o">.</span><span class="n">GenerateDisplacements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_calculator</span> <span class="o">=</span> <span class="n">check</span><span class="o">.</span><span class="n">CheckOutputSuccess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span> <span class="o">=</span> <span class="n">submit</span><span class="o">.</span><span class="n">Calculator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vibrational_freq</span> <span class="o">=</span> <span class="n">eigenvec</span><span class="o">.</span><span class="n">VibrationalFrequencies</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_specify_geometry_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Define geometry input files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;geometry.in&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;geo.gen&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;so3lr.xyz&#39;</span>
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.check_periodic_vs_non_periodic">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.check_periodic_vs_non_periodic">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_periodic_vs_non_periodic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the system is periodic or non-periodic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cif_file</span> <span class="o">=</span> <span class="p">[</span><span class="n">file</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cif&#39;</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">cif_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">geometry_input</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">geometry_input</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">and</span> <span class="s1">&#39;lattice_vector&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                        <span class="n">columns</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">break</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span> <span class="ow">and</span> <span class="s1">&#39;Lattice&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">break</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span></div>
+
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.print_periodic_vs_non_periodic">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.print_periodic_vs_non_periodic">[docs]</a>
+    <span class="k">def</span> <span class="nf">print_periodic_vs_non_periodic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints if the system is periodic or non-periodic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE SYSTEM IS NON PERIODIC&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE SYSTEM IS PERIODIC&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.code_initialization">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.code_initialization">[docs]</a>
+    <span class="k">def</span> <span class="nf">code_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the code based on the periodicity of the system. </span>
+<span class="sd">        If the system is periodic, and a .cif file is provided, </span>
+<span class="sd">        the geometry is converted and the international space group number </span>
+<span class="sd">        of the experimental structure is determined. </span>
+<span class="sd">        If the system is non-periodic, no action is taken.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geometry_conversion</span><span class="o">.</span><span class="n">check_cif_file</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="n">initial_space_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spglib_processor</span><span class="o">.</span><span class="n">get_international_space_group_number</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;INTERNATIONAL SPACE GROUP NUMBER OF THE EXPERIMENTAL STRUCTURE: </span><span class="si">{</span><span class="n">initial_space_group</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.decision_submission_cell">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.decision_submission_cell">[docs]</a>
+    <span class="k">def</span> <span class="nf">decision_submission_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines the appropriate approach for generating the displaced structures.</span>
+<span class="sd">        If the system is periodic, submits calculations using the PhonopyCalculator class. </span>
+<span class="sd">        If the system is non-periodic, generates displaced structures using the GenerateDisplacements class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">submit_phonopy_displacements</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generated_displacements_mol</span><span class="o">.</span><span class="n">create_the_displaced_structures</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.periodic_space_group_calc">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.periodic_space_group_calc">[docs]</a>
+    <span class="k">def</span> <span class="nf">periodic_space_group_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the space group of the periodic structure after cell and geometry optimization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">flag_exit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_calculator</span><span class="o">.</span><span class="n">single_successful_output</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">flag_exit</span><span class="p">:</span>
+            <span class="n">exit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="o">.</span><span class="n">frozen_phonon_approximation_drct</span><span class="p">()</span>
+                    <span class="n">source_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+                    <span class="n">space_group_of_optimized_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spglib_processor</span><span class="o">.</span><span class="n">get_international_space_group_number</span><span class="p">(</span><span class="n">source_path</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;INTERNATIONAL SPACE GROUP NUMBER OF THE OPTIMIZED STRUCTURE: </span><span class="si">{</span><span class="n">space_group_of_optimized_str</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">calculator</span><span class="o">.</span><span class="n">frozen_phonon_approximation_drct</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.dyn_mat_for_eigvec_eig_val_freq">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.dyn_mat_for_eigvec_eig_val_freq">[docs]</a>
+    <span class="k">def</span> <span class="nf">dyn_mat_for_eigvec_eig_val_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns eigenvalues, eigenvectors and in turn frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="n">hessian</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibrational_freq</span><span class="o">.</span><span class="n">_mass_weighted_hessian</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hessian</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">disp_forces_dataset_dyn_matrix</span><span class="p">()</span>
+            <span class="n">hessian</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">hessian</span><span class="p">)</span>   
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">eigvecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigvals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vibrational_freq</span><span class="o">.</span><span class="n">read_eig_vec_phonopy</span><span class="p">(</span><span class="n">hessian</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="PeriodicvsNonPeriodic.eigenvec_eigenval_freq">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.eigenvec_eigenval_freq">[docs]</a>
+    <span class="k">def</span> <span class="nf">eigenvec_eigenval_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If successful, it returns the eigenvectors, eigenvalues and frequencies. </span>
+<span class="sd">        If an error occurs, it prints an error message.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dyn_mat_for_eigvec_eig_val_freq</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE FORCE CONSTANTS HAVE BEEN CALCULATED USING PHONOPY</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE DYNAMICAL MATRIX HAS BEEN CALCULATED USING PHONOPY</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span> 
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE FORCE CONSTANTS HAVE BEEN CALCULATED</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;THE DYNAMICAL MATRIX HAS BEEN CALCULATED</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span>
+             
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;FREQUENCIES (1/cm)&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            
+            <span class="n">num_negative_freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF NEGATIVE FREQUENCIES: </span><span class="si">{</span><span class="n">num_negative_freqs</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">num_excluded_freqs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">&gt;=</span> <span class="mi">30</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;Frequency.txt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigvecs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eigvals</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">frequencies_in_cm_minus_1</span><span class="p">,</span> <span class="n">num_excluded_freqs</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;FORCE CONSTANTS/DYNAMICAL MATRIX / AN ERROR WAS OCCURED: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*&#39;</span> <span class="o">*</span> <span class="mi">150</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

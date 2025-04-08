@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.IRRamanSpectra &mdash; THeSeuSS 0.0.post72 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=0e8682e5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post72
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.IRRamanSpectra</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.IRRamanSpectra</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;IR and Raman intensities. For periodic systems.&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">Constants</span> <span class="k">as</span> <span class="n">c</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">InputsPreparation</span> <span class="k">as</span> <span class="n">inputs</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">TwoPointCentralDifference</span> <span class="k">as</span> <span class="n">cendiff</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">CheckPeriodicvsNonPeriodic</span> <span class="k">as</span> <span class="n">pervsnonper</span>
+
+
+<div class="viewcode-block" id="IntensityCalculator">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.IRRamanSpectra.IntensityCalculator">[docs]</a>
+<span class="k">class</span> <span class="nc">IntensityCalculator</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">eig_vec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">cartesian_pol</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pol</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">no_negfreqs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span> <span class="o">=</span> <span class="n">eig_vec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="o">=</span> <span class="n">cartesian_pol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="n">pol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_negfreqs</span> <span class="o">=</span> <span class="n">no_negfreqs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart_pol_factor</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dipole_factor</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_IR_DFTB</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_DFTB</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_FHIaims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_periodicity</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_periodicity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup PeriodicvsNonPeriodic class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">check_periodic_non_periodic</span> <span class="o">=</span> <span class="n">pervsnonper</span><span class="o">.</span><span class="n">PeriodicvsNonPeriodic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="n">check_periodic_non_periodic</span><span class="o">.</span><span class="n">check_periodic_vs_non_periodic</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_read_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads and returns the volume of the system if the system is periodic.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">central_diff</span> <span class="o">=</span> <span class="n">cendiff</span><span class="o">.</span><span class="n">TwoPointCentralDiff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">central_diff</span><span class="o">.</span><span class="n">get_volume</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_set_geometry_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the input geometry file name based on the simulation parameters (periodicity and code).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;vibrations/geometry.in&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;vibrations/geo.gen&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;vibrations/geometry_backup.in&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;vibrations/geo_backup.gen&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_set_constants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the ConstantsSpectra class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">constant_initialization</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ConstantsSpectra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cart_pol_factor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_factor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span> <span class="o">=</span> <span class="n">constant_initialization</span><span class="o">.</span><span class="n">constants_definition</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_IR_DFTB</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span><span class="p">)</span> <span class="c1"># 3.57106431203 - D^2/(A^2*amu) length units in dftb+: bohr.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_DFTB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span><span class="o">**</span><span class="mi">4</span> <span class="c1"># 0.07841599489 - (bohr^6/bohr^2 to ang^4) ang^4/amu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_FHIaims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2angstrom</span><span class="o">**</span><span class="mi">6</span> <span class="c1">#  0.02195865620442408 - (bohr^6/ang^2 to ang^4) ang^4/amu</span>
+
+<div class="viewcode-block" id="IntensityCalculator.IRintensity">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.IRRamanSpectra.IntensityCalculator.IRintensity">[docs]</a>
+    <span class="k">def</span> <span class="nf">IRintensity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the IR intensity.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_constants</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                <span class="n">grad_dip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="c1"># D</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">grad_dip</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span> <span class="c1"># D^2/(A^2*amu)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="n">grad_dip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="c1"># D</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">grad_dip</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_IR_DFTB</span> <span class="c1"># D^2/(A^2*amu)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_read_volume</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                <span class="n">grad_cart_pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cart_pol_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dipole_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="c1"># D</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">grad_cart_pol</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span> <span class="c1"># D^2/(A^2*amu)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="n">grad_cart_pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="c1"># D</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">grad_cart_pol</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">ir_factor</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_IR_DFTB</span> <span class="c1"># D^2/(A^2*amu)</span></div>
+
+
+<div class="viewcode-block" id="IntensityCalculator.Ramanactivity">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.IRRamanSpectra.IntensityCalculator.Ramanactivity">[docs]</a>
+    <span class="k">def</span> <span class="nf">Ramanactivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the Raman Activity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_constants</span><span class="p">()</span>
+
+        <span class="n">alphas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">eig_vec</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_geometry_inputs</span><span class="p">()</span>
+        <span class="n">geometry_processor</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">GeometryProcessor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geom_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span> 
+        <span class="n">natoms</span> <span class="o">=</span> <span class="n">geometry_processor</span><span class="o">.</span><span class="n">number_of_atoms</span><span class="p">()</span>
+   
+        <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">xz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">yz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span><span class="p">):</span>	
+            <span class="n">xx</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+            <span class="n">yy</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+            <span class="n">zz</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+            <span class="n">xy</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+            <span class="n">xz</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+            <span class="n">yz</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphas</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="n">step</span><span class="p">]</span>
+
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">+</span> <span class="n">yy</span> <span class="o">+</span> <span class="n">zz</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">xx</span> <span class="o">-</span> <span class="n">yy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">xx</span> <span class="o">-</span> <span class="n">zz</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">yy</span> <span class="o">-</span> <span class="n">zz</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">6</span><span class="o">*</span><span class="p">(</span><span class="n">xy</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">xz</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">yz</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">=</span> <span class="mi">45</span> <span class="o">*</span> <span class="p">(</span><span class="n">alpha</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">7.</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">beta</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_FHIaims</span> <span class="c1"># ang^4/amu</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">borh2ang_for_Raman_DFTB</span> <span class="c1"># ang^4/amu</span></div>
+
+
+<div class="viewcode-block" id="IntensityCalculator.spectra_calculation">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.IRRamanSpectra.IntensityCalculator.spectra_calculation">[docs]</a>
+    <span class="k">def</span> <span class="nf">spectra_calculation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the IR intensity and Raman activity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">IRintensity</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;IR INTENSITY (D</span><span class="se">\N{SUPERSCRIPT TWO}</span><span class="s1">/(A</span><span class="se">\N{SUPERSCRIPT TWO}</span><span class="s1">amu))&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">no_negfreqs</span><span class="p">:]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;IRintensity.txt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;IR INTENSITY HAS NOT BEEN CALCULATED&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Ramanactivity</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RAMAN ACTIVITY (A</span><span class="se">\N{SUPERSCRIPT FOUR}</span><span class="s1">/amu)&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">no_negfreqs</span><span class="p">:]</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;Ramanactivity.txt&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;RAMAN ACTIVITY HAS NOT BEEN CALCULATED&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">IR_intensity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raman_activity</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

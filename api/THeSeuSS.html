@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS package &mdash; THeSeuSS 0.0.post86 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=8775217d"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="THeSeuSS" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post86
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Module Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">THeSeuSS package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.CheckPeriodicvsNonPeriodic">THeSeuSS.CheckPeriodicvsNonPeriodic module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic"><code class="docutils literal notranslate"><span class="pre">PeriodicvsNonPeriodic</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.CheckSuccessOutput">THeSeuSS.CheckSuccessOutput module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess"><code class="docutils literal notranslate"><span class="pre">CheckOutputSuccess</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.Constants">THeSeuSS.Constants module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.Constants.ConstantsSpectra"><code class="docutils literal notranslate"><span class="pre">ConstantsSpectra</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.Coordinates">THeSeuSS.Coordinates module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.Coordinates.ConversionUnitsCoordinates"><code class="docutils literal notranslate"><span class="pre">ConversionUnitsCoordinates</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.EigenvectorsFrequenciesPHONOPY">THeSeuSS.EigenvectorsFrequenciesPHONOPY module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies"><code class="docutils literal notranslate"><span class="pre">VibrationalFrequencies</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.FiniteDisplacements_phonopy">THeSeuSS.FiniteDisplacements_phonopy module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.FiniteDisplacements_phonopy.FDSubdirectoriesGeneration"><code class="docutils literal notranslate"><span class="pre">FDSubdirectoriesGeneration</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.GenerateDisplacementsMolecules">THeSeuSS.GenerateDisplacementsMolecules module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements"><code class="docutils literal notranslate"><span class="pre">GenerateDisplacements</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.GeometryInputConversion">THeSeuSS.GeometryInputConversion module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.GeometryInputConversion.GeometryConversion"><code class="docutils literal notranslate"><span class="pre">GeometryConversion</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.IRRamanSpectra">THeSeuSS.IRRamanSpectra module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.IRRamanSpectra.IntensityCalculator"><code class="docutils literal notranslate"><span class="pre">IntensityCalculator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.InputOutputFiles">THeSeuSS.InputOutputFiles module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.InputOutputFiles.InputsGenerator"><code class="docutils literal notranslate"><span class="pre">InputsGenerator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.InputsPreparation">THeSeuSS.InputsPreparation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.InputsPreparation.GeometryProcessor"><code class="docutils literal notranslate"><span class="pre">GeometryProcessor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.MapAtoms">THeSeuSS.MapAtoms module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.MapAtoms.spglibProcessor"><code class="docutils literal notranslate"><span class="pre">spglibProcessor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.PlotSpectra">THeSeuSS.PlotSpectra module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.PlotSpectra.SpectraPlotter"><code class="docutils literal notranslate"><span class="pre">SpectraPlotter</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.Restart">THeSeuSS.Restart module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.Restart.RestartCalculation"><code class="docutils literal notranslate"><span class="pre">RestartCalculation</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#theseuss-submitcalculations-module">THeSeuSS.SubmitCalculations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS.TwoPointCentralDifference">THeSeuSS.TwoPointCentralDifference module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff"><code class="docutils literal notranslate"><span class="pre">TwoPointCentralDiff</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-THeSeuSS">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">THeSeuSS</a></li>
+      <li class="breadcrumb-item active">THeSeuSS package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/THeSeuSS.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="theseuss-package">
+<h1>THeSeuSS package<a class="headerlink" href="#theseuss-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-THeSeuSS.CheckPeriodicvsNonPeriodic">
+<span id="theseuss-checkperiodicvsnonperiodic-module"></span><h2>THeSeuSS.CheckPeriodicvsNonPeriodic module<a class="headerlink" href="#module-THeSeuSS.CheckPeriodicvsNonPeriodic" title="Link to this heading"></a></h2>
+<p>Verifies whether the simulation of spectra is intended for a periodic or non-periodic system.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.CheckPeriodicvsNonPeriodic.</span></span><span class="sig-name descname"><span class="pre">PeriodicvsNonPeriodic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.check_periodic_vs_non_periodic">
+<span class="sig-name descname"><span class="pre">check_periodic_vs_non_periodic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.check_periodic_vs_non_periodic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.check_periodic_vs_non_periodic" title="Link to this definition"></a></dt>
+<dd><p>Checks if the system is periodic or non-periodic.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.code_initialization">
+<span class="sig-name descname"><span class="pre">code_initialization</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.code_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.code_initialization" title="Link to this definition"></a></dt>
+<dd><p>Starts the code based on the periodicity of the system.
+If the system is periodic, and a .cif file is provided,
+the geometry is converted and the international space group number
+of the experimental structure is determined.
+If the system is non-periodic, no action is taken.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.decision_submission_cell">
+<span class="sig-name descname"><span class="pre">decision_submission_cell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.decision_submission_cell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.decision_submission_cell" title="Link to this definition"></a></dt>
+<dd><p>Determines the appropriate approach for generating the displaced structures.
+If the system is periodic, submits calculations using the PhonopyCalculator class.
+If the system is non-periodic, generates displaced structures using the GenerateDisplacements class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.dyn_mat_for_eigvec_eig_val_freq">
+<span class="sig-name descname"><span class="pre">dyn_mat_for_eigvec_eig_val_freq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.dyn_mat_for_eigvec_eig_val_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.dyn_mat_for_eigvec_eig_val_freq" title="Link to this definition"></a></dt>
+<dd><p>Returns eigenvalues, eigenvectors and in turn frequencies.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.eigenvec_eigenval_freq">
+<span class="sig-name descname"><span class="pre">eigenvec_eigenval_freq</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.eigenvec_eigenval_freq"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.eigenvec_eigenval_freq" title="Link to this definition"></a></dt>
+<dd><p>If successful, it returns the eigenvectors, eigenvalues and frequencies.
+If an error occurs, it prints an error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.periodic_space_group_calc">
+<span class="sig-name descname"><span class="pre">periodic_space_group_calc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.periodic_space_group_calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.periodic_space_group_calc" title="Link to this definition"></a></dt>
+<dd><p>Calculate the space group of the periodic structure after cell and geometry optimization.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.print_periodic_vs_non_periodic">
+<span class="sig-name descname"><span class="pre">print_periodic_vs_non_periodic</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckPeriodicvsNonPeriodic.html#PeriodicvsNonPeriodic.print_periodic_vs_non_periodic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckPeriodicvsNonPeriodic.PeriodicvsNonPeriodic.print_periodic_vs_non_periodic" title="Link to this definition"></a></dt>
+<dd><p>Prints if the system is periodic or non-periodic.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.CheckSuccessOutput">
+<span id="theseuss-checksuccessoutput-module"></span><h2>THeSeuSS.CheckSuccessOutput module<a class="headerlink" href="#module-THeSeuSS.CheckSuccessOutput" title="Link to this heading"></a></h2>
+<p>It checks if the single point calculations have been succesfully finished.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.CheckSuccessOutput.CheckOutputSuccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.CheckSuccessOutput.</span></span><span class="sig-name descname"><span class="pre">CheckOutputSuccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckSuccessOutput.html#CheckOutputSuccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.check_for_success_calc_before_spectra">
+<span class="sig-name descname"><span class="pre">check_for_success_calc_before_spectra</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/CheckSuccessOutput.html#CheckOutputSuccess.check_for_success_calc_before_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.check_for_success_calc_before_spectra" title="Link to this definition"></a></dt>
+<dd><p>Checks for successful completion of calculations before proceeding to spectra generation.
+FileNotFoundError: If the file does not exist.
+ValueError: If the file does not contain the expected patterns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.single_successful_output">
+<span class="sig-name descname"><span class="pre">single_successful_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/CheckSuccessOutput.html#CheckOutputSuccess.single_successful_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.CheckSuccessOutput.CheckOutputSuccess.single_successful_output" title="Link to this definition"></a></dt>
+<dd><p>Checks if the cell and geometry optimization calculation has been successful.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.Constants">
+<span id="theseuss-constants-module"></span><h2>THeSeuSS.Constants module<a class="headerlink" href="#module-THeSeuSS.Constants" title="Link to this heading"></a></h2>
+<p>Constants</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.Constants.ConstantsSpectra">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.Constants.</span></span><span class="sig-name descname"><span class="pre">ConstantsSpectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Constants.html#ConstantsSpectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Constants.ConstantsSpectra" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Constants.ConstantsSpectra.constants_definition">
+<span class="sig-name descname"><span class="pre">constants_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/Constants.html#ConstantsSpectra.constants_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Constants.ConstantsSpectra.constants_definition" title="Link to this definition"></a></dt>
+<dd><p>Constants</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Constants.ConstantsSpectra.hubbard_derivates_dict">
+<span class="sig-name descname"><span class="pre">hubbard_derivates_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Constants.html#ConstantsSpectra.hubbard_derivates_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Constants.ConstantsSpectra.hubbard_derivates_dict" title="Link to this definition"></a></dt>
+<dd><p>Dictionary containing all atomic Hubbard derivates (atomic units).
+Retrieved by <a class="reference external" href="https://dftb.org/parameters/download/3ob/3ob-3-1-cc">https://dftb.org/parameters/download/3ob/3ob-3-1-cc</a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Constants.ConstantsSpectra.max_angular_mom_dict">
+<span class="sig-name descname"><span class="pre">max_angular_mom_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Constants.html#ConstantsSpectra.max_angular_mom_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Constants.ConstantsSpectra.max_angular_mom_dict" title="Link to this definition"></a></dt>
+<dd><p>Dictionary containing maximum angular momenta.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.Coordinates">
+<span id="theseuss-coordinates-module"></span><h2>THeSeuSS.Coordinates module<a class="headerlink" href="#module-THeSeuSS.Coordinates" title="Link to this heading"></a></h2>
+<p>It converts the coordinates from cartesian to fractional.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.Coordinates.ConversionUnitsCoordinates">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.Coordinates.</span></span><span class="sig-name descname"><span class="pre">ConversionUnitsCoordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Coordinates.html#ConversionUnitsCoordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Coordinates.ConversionUnitsCoordinates" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.Coordinates.ConversionUnitsCoordinates.PATH">
+<span class="sig-name descname"><span class="pre">PATH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/mnt/aiongpfs/users/aboziki/THeSeuSS'</span></em><a class="headerlink" href="#THeSeuSS.Coordinates.ConversionUnitsCoordinates.PATH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Coordinates.ConversionUnitsCoordinates.cartesian_to_fractional_DFTBplus">
+<span class="sig-name descname"><span class="pre">cartesian_to_fractional_DFTBplus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_of_current_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Coordinates.html#ConversionUnitsCoordinates.cartesian_to_fractional_DFTBplus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Coordinates.ConversionUnitsCoordinates.cartesian_to_fractional_DFTBplus" title="Link to this definition"></a></dt>
+<dd><p>Converts cartesian coordinates to fractional - DFTB+.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Coordinates.ConversionUnitsCoordinates.cartesian_to_fractional_FHIaims">
+<span class="sig-name descname"><span class="pre">cartesian_to_fractional_FHIaims</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_of_current_directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Coordinates.html#ConversionUnitsCoordinates.cartesian_to_fractional_FHIaims"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Coordinates.ConversionUnitsCoordinates.cartesian_to_fractional_FHIaims" title="Link to this definition"></a></dt>
+<dd><p>It converts cartesian coordinates to fractional - FHI-aims.’’’</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.EigenvectorsFrequenciesPHONOPY">
+<span id="theseuss-eigenvectorsfrequenciesphonopy-module"></span><h2>THeSeuSS.EigenvectorsFrequenciesPHONOPY module<a class="headerlink" href="#module-THeSeuSS.EigenvectorsFrequenciesPHONOPY" title="Link to this heading"></a></h2>
+<p>Eigenvectors and eigenvalues from PHONOPY code</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.EigenvectorsFrequenciesPHONOPY.</span></span><span class="sig-name descname"><span class="pre">VibrationalFrequencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file_of_SCFSs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/EigenvectorsFrequenciesPHONOPY.html#VibrationalFrequencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.GEOMETRY_IN">
+<span class="sig-name descname"><span class="pre">GEOMETRY_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geometry.in'</span></em><a class="headerlink" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.GEOMETRY_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.GEO_GEN">
+<span class="sig-name descname"><span class="pre">GEO_GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geo.gen'</span></em><a class="headerlink" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.GEO_GEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.SO3LR">
+<span class="sig-name descname"><span class="pre">SO3LR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'so3lr.xyz'</span></em><a class="headerlink" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.SO3LR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.read_eig_vec_phonopy">
+<span class="sig-name descname"><span class="pre">read_eig_vec_phonopy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hessian</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/EigenvectorsFrequenciesPHONOPY.html#VibrationalFrequencies.read_eig_vec_phonopy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.read_eig_vec_phonopy" title="Link to this definition"></a></dt>
+<dd><p>Returns eigenvalues, eigenvectors and in turn frequencies.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.FiniteDisplacements_phonopy">
+<span id="theseuss-finitedisplacements-phonopy-module"></span><h2>THeSeuSS.FiniteDisplacements_phonopy module<a class="headerlink" href="#module-THeSeuSS.FiniteDisplacements_phonopy" title="Link to this heading"></a></h2>
+<p>Creation of the subdirectories of the finite displaced geometries.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.FiniteDisplacements_phonopy.FDSubdirectoriesGeneration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.FiniteDisplacements_phonopy.</span></span><span class="sig-name descname"><span class="pre">FDSubdirectoriesGeneration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">eev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">etot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">forces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_iter_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pol_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">SCC_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_SCC_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/FiniteDisplacements_phonopy.html#FDSubdirectoriesGeneration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.FiniteDisplacements_phonopy.FDSubdirectoriesGeneration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.FiniteDisplacements_phonopy.FDSubdirectoriesGeneration.iterate_over_files">
+<span class="sig-name descname"><span class="pre">iterate_over_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/FiniteDisplacements_phonopy.html#FDSubdirectoriesGeneration.iterate_over_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.FiniteDisplacements_phonopy.FDSubdirectoriesGeneration.iterate_over_files" title="Link to this definition"></a></dt>
+<dd><p>Processes displaced structures and generates required input files accordingly.
+Copies necessary files into directories containing displaced structures.
+Note: Exception handling is implemented to catch any errors during the iteration.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.GenerateDisplacementsMolecules">
+<span id="theseuss-generatedisplacementsmolecules-module"></span><h2>THeSeuSS.GenerateDisplacementsMolecules module<a class="headerlink" href="#module-THeSeuSS.GenerateDisplacementsMolecules" title="Link to this heading"></a></h2>
+<p>Prepares perturbed structures to facilitate the application of the finite displacements method,
+enabling the subsequent calculation of molecular vibrational frequencies.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.GenerateDisplacementsMolecules.</span></span><span class="sig-name descname"><span class="pre">GenerateDisplacements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/GenerateDisplacementsMolecules.html#GenerateDisplacements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.GEOMETRY_IN">
+<span class="sig-name descname"><span class="pre">GEOMETRY_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'vibrations/geometry.in'</span></em><a class="headerlink" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.GEOMETRY_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.GEO_GEN">
+<span class="sig-name descname"><span class="pre">GEO_GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'vibrations/geo.gen'</span></em><a class="headerlink" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.GEO_GEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.SO3LR">
+<span class="sig-name descname"><span class="pre">SO3LR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'so3lr.xyz'</span></em><a class="headerlink" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.SO3LR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.create_the_displaced_structures">
+<span class="sig-name descname"><span class="pre">create_the_displaced_structures</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/GenerateDisplacementsMolecules.html#GenerateDisplacements.create_the_displaced_structures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.GenerateDisplacementsMolecules.GenerateDisplacements.create_the_displaced_structures" title="Link to this definition"></a></dt>
+<dd><p>Generate displaced input structures by adding and subtracting the displacement value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.GeometryInputConversion">
+<span id="theseuss-geometryinputconversion-module"></span><h2>THeSeuSS.GeometryInputConversion module<a class="headerlink" href="#module-THeSeuSS.GeometryInputConversion" title="Link to this heading"></a></h2>
+<p>Conversion of .cif file to either FHIaims or DFTB+ geometry input files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.GeometryInputConversion.GeometryConversion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.GeometryInputConversion.</span></span><span class="sig-name descname"><span class="pre">GeometryConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/GeometryInputConversion.html#GeometryConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.GeometryInputConversion.GeometryConversion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.GeometryInputConversion.GeometryConversion.aims_geom_input_to_extxyz">
+<span class="sig-name descname"><span class="pre">aims_geom_input_to_extxyz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_aims_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extxyz_file_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/GeometryInputConversion.html#GeometryConversion.aims_geom_input_to_extxyz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.GeometryInputConversion.GeometryConversion.aims_geom_input_to_extxyz" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the structure from a file of geometry.in aims file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.GeometryInputConversion.GeometryConversion.check_cif_file">
+<span class="sig-name descname"><span class="pre">check_cif_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/GeometryInputConversion.html#GeometryConversion.check_cif_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.GeometryInputConversion.GeometryConversion.check_cif_file" title="Link to this definition"></a></dt>
+<dd><p>Verifies the presence of a file with the .cif extension within the directory.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.IRRamanSpectra">
+<span id="theseuss-irramanspectra-module"></span><h2>THeSeuSS.IRRamanSpectra module<a class="headerlink" href="#module-THeSeuSS.IRRamanSpectra" title="Link to this heading"></a></h2>
+<p>IR and Raman intensities. For periodic systems.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.IRRamanSpectra.IntensityCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.IRRamanSpectra.</span></span><span class="sig-name descname"><span class="pre">IntensityCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">eig_vec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartesian_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_negfreqs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/IRRamanSpectra.html#IntensityCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.IRRamanSpectra.IntensityCalculator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.IRRamanSpectra.IntensityCalculator.IRintensity">
+<span class="sig-name descname"><span class="pre">IRintensity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/IRRamanSpectra.html#IntensityCalculator.IRintensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.IRRamanSpectra.IntensityCalculator.IRintensity" title="Link to this definition"></a></dt>
+<dd><p>Calculates the IR intensity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.IRRamanSpectra.IntensityCalculator.Ramanactivity">
+<span class="sig-name descname"><span class="pre">Ramanactivity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/IRRamanSpectra.html#IntensityCalculator.Ramanactivity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.IRRamanSpectra.IntensityCalculator.Ramanactivity" title="Link to this definition"></a></dt>
+<dd><p>Calculates the Raman Activity.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.IRRamanSpectra.IntensityCalculator.spectra_calculation">
+<span class="sig-name descname"><span class="pre">spectra_calculation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/IRRamanSpectra.html#IntensityCalculator.spectra_calculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.IRRamanSpectra.IntensityCalculator.spectra_calculation" title="Link to this definition"></a></dt>
+<dd><p>Saves the IR intensity and Raman activity.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.InputOutputFiles">
+<span id="theseuss-inputoutputfiles-module"></span><h2>THeSeuSS.InputOutputFiles module<a class="headerlink" href="#module-THeSeuSS.InputOutputFiles" title="Link to this heading"></a></h2>
+<p>Preparation of inputs for cell and geometry optimization / single point calculations</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.InputOutputFiles.</span></span><span class="sig-name descname"><span class="pre">InputsGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">kpoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">etot</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_iter_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequencies</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pol_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_force_component</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SCC_tolerance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_SCC_iterations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/InputOutputFiles.html#InputsGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.DFTB_parameters_input_file">
+<span class="sig-name descname"><span class="pre">DFTB_parameters_input_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dftb_in_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/InputOutputFiles.html#InputsGenerator.DFTB_parameters_input_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.DFTB_parameters_input_file" title="Link to this definition"></a></dt>
+<dd><p>Generates the dftb_in.hsd input file of DFTB+</p>
+<dl class="simple">
+<dt>species_path_updated: str</dt><dd><p>Directory path where the .skf files are located</p>
+</dd>
+<dt>data: dict</dt><dd><p>It stores the parameters found in the dftb_in.hsd file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.FHIaims_control_file">
+<span class="sig-name descname"><span class="pre">FHIaims_control_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">control_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/InputOutputFiles.html#InputsGenerator.FHIaims_control_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.FHIaims_control_file" title="Link to this definition"></a></dt>
+<dd><p>Generates the control input file of FHIaims.</p>
+<dl class="simple">
+<dt>number_atype: int, list</dt><dd><p>The number of each atom within the crystal structure</p>
+</dd>
+<dt>atype: str, list</dt><dd><p>The atom type of each atom within the crystal structure</p>
+</dd>
+<dt>unique_atype: str, list</dt><dd><p>The atom types present in the crystal structure (appearing only once)</p>
+</dd>
+<dt>input_parameters: dict</dt><dd><p>It stores the parameters found in the control file and is utilized to display the input information in the output</p>
+</dd>
+<dt>species_path_updated: str</dt><dd><p>Directory path where the species defaults settings are located</p>
+</dd>
+<dt>path_of_file_atype: str</dt><dd><p>Path of the species defaults of an atom type</p>
+</dd>
+<dt>source_data: str</dt><dd><p>Data of the species defaults of an atom type</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.GEOMETRY_IN">
+<span class="sig-name descname"><span class="pre">GEOMETRY_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geometry.in'</span></em><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.GEOMETRY_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.GEO_GEN">
+<span class="sig-name descname"><span class="pre">GEO_GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geo.gen'</span></em><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.GEO_GEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.SO3LR_GEN">
+<span class="sig-name descname"><span class="pre">SO3LR_GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'so3lr.xyz'</span></em><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.SO3LR_GEN" title="Link to this definition"></a></dt>
+<dd><p>Generation of FHIaims and DFTB+ inputs.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.code">
+<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.code" title="Link to this definition"></a></dt>
+<dd><p>Code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.kpoints">
+<span class="sig-name descname"><span class="pre">kpoints</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.kpoints" title="Link to this definition"></a></dt>
+<dd><p>K-points (Three values: they are converted to integer)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.functional">
+<span class="sig-name descname"><span class="pre">functional</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.functional" title="Link to this definition"></a></dt>
+<dd><p>Functional (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.eev">
+<span class="sig-name descname"><span class="pre">eev</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.eev" title="Link to this definition"></a></dt>
+<dd><p>Convergence criterion for the self-consistency cycle, based on the sum of eigenvalues (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.rho">
+<span class="sig-name descname"><span class="pre">rho</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.rho" title="Link to this definition"></a></dt>
+<dd><p>Convergence criterion for the self-consistency cycle, based on the charge density (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.etot">
+<span class="sig-name descname"><span class="pre">etot</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.etot" title="Link to this definition"></a></dt>
+<dd><p>Convergence criterion for the self-consistency cycle, based on the total energy (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.forces">
+<span class="sig-name descname"><span class="pre">forces</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.forces" title="Link to this definition"></a></dt>
+<dd><p>Convergence criterion for the self-consistency cycle, based on energy derivatives/forces (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.sc_iter_limit">
+<span class="sig-name descname"><span class="pre">sc_iter_limit</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.sc_iter_limit" title="Link to this definition"></a></dt>
+<dd><p>Maximum number of s.c.f. cycles before a calculation is considered and abandoned (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.species">
+<span class="sig-name descname"><span class="pre">species</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.species" title="Link to this definition"></a></dt>
+<dd><p>Species defaults settings; basis set, integration grids, accuracy of the Hartree potential (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.frequencies">
+<span class="sig-name descname"><span class="pre">frequencies</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.frequencies" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.geometry">
+<span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.geometry" title="Link to this definition"></a></dt>
+<dd><p>Maximum residual force component per atom, below which the geometry relaxation is considered converged (geometry relaxation) (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.energy">
+<span class="sig-name descname"><span class="pre">energy</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.energy" title="Link to this definition"></a></dt>
+<dd><p>Energy amount by which a relaxation step can move upwards and is still accepted (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.steps">
+<span class="sig-name descname"><span class="pre">steps</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.steps" title="Link to this definition"></a></dt>
+<dd><p>Maximum number of steps after which a structure optimization will be aborted (FHIaims)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.pol_grid">
+<span class="sig-name descname"><span class="pre">pol_grid</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.pol_grid" title="Link to this definition"></a></dt>
+<dd><p>Polarization grid</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.max_force_component">
+<span class="sig-name descname"><span class="pre">max_force_component</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.max_force_component" title="Link to this definition"></a></dt>
+<dd><p>Optimization is stopped, if the force component with the maximal absolute value goes below this value (DFTB+)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str / converted to float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.max_steps">
+<span class="sig-name descname"><span class="pre">max_steps</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.max_steps" title="Link to this definition"></a></dt>
+<dd><p>Maximum number of steps after which the optimization should stop (DFTB+)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.SCC_tolerance">
+<span class="sig-name descname"><span class="pre">SCC_tolerance</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.SCC_tolerance" title="Link to this definition"></a></dt>
+<dd><p>Stopping criteria for the scc. Tolerance for the maximum difference in any charge between two scc cycles (DFTB+)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.max_SCC_iterations">
+<span class="sig-name descname"><span class="pre">max_SCC_iterations</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.max_SCC_iterations" title="Link to this definition"></a></dt>
+<dd><p>Maximal number of scc cycles to reach convergence (DFTB+)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.output_file">
+<span class="sig-name descname"><span class="pre">output_file</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.output_file" title="Link to this definition"></a></dt>
+<dd><p>Output file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.dispersion">
+<span class="sig-name descname"><span class="pre">dispersion</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.dispersion" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.path" title="Link to this definition"></a></dt>
+<dd><p>Path of the directory from which the code has been executed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.package_path">
+<span class="sig-name descname"><span class="pre">package_path</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.package_path" title="Link to this definition"></a></dt>
+<dd><p>Path of the directory where the code is located</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.dispersion_type">
+<span class="sig-name descname"><span class="pre">dispersion_type</span></span><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.dispersion_type" title="Link to this definition"></a></dt>
+<dd><p>Dispersion type (MBD_NL or TS)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputOutputFiles.InputsGenerator.file_exists">
+<span class="sig-name descname"><span class="pre">file_exists</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/InputOutputFiles.html#InputsGenerator.file_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputOutputFiles.InputsGenerator.file_exists" title="Link to this definition"></a></dt>
+<dd><p>Checks the existence of input files required for cell and geometry optimization in FHI-aims or DFTB+ calculations.
+If the file does not exist, it generates the required input file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.InputsPreparation">
+<span id="theseuss-inputspreparation-module"></span><h2>THeSeuSS.InputsPreparation module<a class="headerlink" href="#module-THeSeuSS.InputsPreparation" title="Link to this heading"></a></h2>
+<p>Preparation and modification of input files</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.InputsPreparation.</span></span><span class="sig-name descname"><span class="pre">GeometryProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geom_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/InputsPreparation.html#GeometryProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class for exctracting information out of a geometry input file.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.geom_input">
+<span class="sig-name descname"><span class="pre">geom_input</span></span><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.geom_input" title="Link to this definition"></a></dt>
+<dd><p>Namefile of the geometry input file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.code">
+<span class="sig-name descname"><span class="pre">code</span></span><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.code" title="Link to this definition"></a></dt>
+<dd><p>Code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.number_of_atoms">
+<span class="sig-name descname"><span class="pre">number_of_atoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/InputsPreparation.html#GeometryProcessor.number_of_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.number_of_atoms" title="Link to this definition"></a></dt>
+<dd><p>It returns the number of atoms in the structure.</p>
+<dl class="simple">
+<dt>index: int</dt><dd><p>Number of atoms in a given geometry input file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.read_coordinates">
+<span class="sig-name descname"><span class="pre">read_coordinates</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/InputsPreparation.html#GeometryProcessor.read_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.read_coordinates" title="Link to this definition"></a></dt>
+<dd><p>It returns the coordinates from the geometry input file.</p>
+<dl class="simple">
+<dt>coord<span class="classifier">list</span></dt><dd><p>List containing coordinate tuples as floats.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.read_lattice">
+<span class="sig-name descname"><span class="pre">read_lattice</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/InputsPreparation.html#GeometryProcessor.read_lattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.read_lattice" title="Link to this definition"></a></dt>
+<dd><p>It returns the lattice cell (9 elements) from the geometry input file.</p>
+<dl class="simple">
+<dt>cell: list</dt><dd><p>List containing the lattice cell elements as floats.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.InputsPreparation.GeometryProcessor.read_the_atom_type">
+<span class="sig-name descname"><span class="pre">read_the_atom_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'list'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'list'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/InputsPreparation.html#GeometryProcessor.read_the_atom_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.InputsPreparation.GeometryProcessor.read_the_atom_type" title="Link to this definition"></a></dt>
+<dd><p>It returns the atom type of the atoms of the structure from the geometry input file.</p>
+<dl class="simple">
+<dt>atom_type_no: tuple</dt><dd><p>Tuple containing lists of atom type numbers.</p>
+</dd>
+<dt>atom_type: tuple</dt><dd><p>Tuple containing lists of atom types.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.MapAtoms">
+<span id="theseuss-mapatoms-module"></span><h2>THeSeuSS.MapAtoms module<a class="headerlink" href="#module-THeSeuSS.MapAtoms" title="Link to this heading"></a></h2>
+<p>It takes care of equivalent atoms. It maps the polarizability and
+cartesian polarization of irreducible atoms back to reducible atoms.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.MapAtoms.spglibProcessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.MapAtoms.</span></span><span class="sig-name descname"><span class="pre">spglibProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/MapAtoms.html#spglibProcessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.MapAtoms.spglibProcessor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.MapAtoms.spglibProcessor.GEOMETRY_IN">
+<span class="sig-name descname"><span class="pre">GEOMETRY_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geometry.in'</span></em><a class="headerlink" href="#THeSeuSS.MapAtoms.spglibProcessor.GEOMETRY_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="THeSeuSS.MapAtoms.spglibProcessor.GEO_GEN">
+<span class="sig-name descname"><span class="pre">GEO_GEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'geo.gen'</span></em><a class="headerlink" href="#THeSeuSS.MapAtoms.spglibProcessor.GEO_GEN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.MapAtoms.spglibProcessor.get_international_space_group_number">
+<span class="sig-name descname"><span class="pre">get_international_space_group_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#int" title="(in Python v3.12)"><span class="pre">int</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/MapAtoms.html#spglibProcessor.get_international_space_group_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.MapAtoms.spglibProcessor.get_international_space_group_number" title="Link to this definition"></a></dt>
+<dd><p>Returns the international space group number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.MapAtoms.spglibProcessor.prop_equivalent_atoms">
+<span class="sig-name descname"><span class="pre">prop_equivalent_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">cartesian_pol</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_axis_coord</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/MapAtoms.html#spglibProcessor.prop_equivalent_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.MapAtoms.spglibProcessor.prop_equivalent_atoms" title="Link to this definition"></a></dt>
+<dd><p>Returns the polarizability and Cartesian polarization arrays after removing the last two columns,
+which represent the atom number and coordinate (axis) of each atom.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.PlotSpectra">
+<span id="theseuss-plotspectra-module"></span><h2>THeSeuSS.PlotSpectra module<a class="headerlink" href="#module-THeSeuSS.PlotSpectra" title="Link to this heading"></a></h2>
+<p>It applies the spectrum broadening and prepares the IR and
+Raman plots.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.PlotSpectra.SpectraPlotter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.PlotSpectra.</span></span><span class="sig-name descname"><span class="pre">SpectraPlotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">IRintensity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ramanactivity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.2)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">broadening</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">fwhm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#float" title="(in Python v3.12)"><span class="pre">float</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/PlotSpectra.html#SpectraPlotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.PlotSpectra.SpectraPlotter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectra">
+<span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/PlotSpectra.html#SpectraPlotter.plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectra" title="Link to this definition"></a></dt>
+<dd><p>Plots the IR and Raman spectra.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectrum_IR">
+<span class="sig-name descname"><span class="pre">plot_spectrum_IR</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/PlotSpectra.html#SpectraPlotter.plot_spectrum_IR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectrum_IR" title="Link to this definition"></a></dt>
+<dd><p>Prepares the plot for the IR spectrum.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectrum_Raman">
+<span class="sig-name descname"><span class="pre">plot_spectrum_Raman</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/PlotSpectra.html#SpectraPlotter.plot_spectrum_Raman"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.PlotSpectra.SpectraPlotter.plot_spectrum_Raman" title="Link to this definition"></a></dt>
+<dd><p>Prepares the plot for the Raman spectrum.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS.Restart">
+<span id="theseuss-restart-module"></span><h2>THeSeuSS.Restart module<a class="headerlink" href="#module-THeSeuSS.Restart" title="Link to this heading"></a></h2>
+<p>Restart module of the package</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.Restart.RestartCalculation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.Restart.</span></span><span class="sig-name descname"><span class="pre">RestartCalculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commands</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_dims</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Restart.html#RestartCalculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Restart.RestartCalculation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Restart.RestartCalculation.directory_non_completed_calculations">
+<span class="sig-name descname"><span class="pre">directory_non_completed_calculations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#list" title="(in Python v3.12)"><span class="pre">list</span></a></span></span><a class="reference internal" href="../_modules/THeSeuSS/Restart.html#RestartCalculation.directory_non_completed_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Restart.RestartCalculation.directory_non_completed_calculations" title="Link to this definition"></a></dt>
+<dd><p>Returns the directories of single-point calculations that failed to complete successfully.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.Restart.RestartCalculation.restart_calculations">
+<span class="sig-name descname"><span class="pre">restart_calculations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/Restart.html#RestartCalculation.restart_calculations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.Restart.RestartCalculation.restart_calculations" title="Link to this definition"></a></dt>
+<dd><p>Restart the submission of single-point calculations that failed to complete successfully.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="theseuss-submitcalculations-module">
+<h2>THeSeuSS.SubmitCalculations module<a class="headerlink" href="#theseuss-submitcalculations-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-THeSeuSS.TwoPointCentralDifference">
+<span id="theseuss-twopointcentraldifference-module"></span><h2>THeSeuSS.TwoPointCentralDifference module<a class="headerlink" href="#module-THeSeuSS.TwoPointCentralDifference" title="Link to this heading"></a></h2>
+<p>Two-point central difference to calculate the polarizability
+and cartesian polarization. For periodic systems.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">THeSeuSS.TwoPointCentralDifference.</span></span><span class="sig-name descname"><span class="pre">TwoPointCentralDiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dispersion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">supercell</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">restart</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/functions.html#bool" title="(in Python v3.12)"><span class="pre">bool</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">functional</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.12/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/TwoPointCentralDifference.html#TwoPointCentralDiff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3.12/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.calculate_pol_cart_pol">
+<span class="sig-name descname"><span class="pre">calculate_pol_cart_pol</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/TwoPointCentralDifference.html#TwoPointCentralDiff.calculate_pol_cart_pol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.calculate_pol_cart_pol" title="Link to this definition"></a></dt>
+<dd><p>Calculates the polarizability and cartesian polarization, utilizing spglibProcessor to map equivalent atoms and coordinates.
+If a supercell is specified, adjusts the number of atoms and lines accordingly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.coord_conversion_cartesian_to_fractional">
+<span class="sig-name descname"><span class="pre">coord_conversion_cartesian_to_fractional</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/THeSeuSS/TwoPointCentralDifference.html#TwoPointCentralDiff.coord_conversion_cartesian_to_fractional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.coord_conversion_cartesian_to_fractional" title="Link to this definition"></a></dt>
+<dd><p>Converts Cartesian coordinates to fractional coordinates.
+Utilizes the ConversionUnitsCoordinates class to perform the conversion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.get_volume">
+<span class="sig-name descname"><span class="pre">get_volume</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float64</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/TwoPointCentralDifference.html#TwoPointCentralDiff.get_volume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.get_volume" title="Link to this definition"></a></dt>
+<dd><p>Retrieves the volume.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.pol_cart_pol_processor">
+<span class="sig-name descname"><span class="pre">pol_cart_pol_processor</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">[&lt;class</span> <span class="pre">'numpy.ndarray'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'numpy.ndarray'&gt;]</span></span></span><a class="reference internal" href="../_modules/THeSeuSS/TwoPointCentralDifference.html#TwoPointCentralDiff.pol_cart_pol_processor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.pol_cart_pol_processor" title="Link to this definition"></a></dt>
+<dd><p>Processes the polarizability and cartesian polarization.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-THeSeuSS">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-THeSeuSS" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="THeSeuSS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

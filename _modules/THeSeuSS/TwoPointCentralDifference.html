@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.TwoPointCentralDifference &mdash; THeSeuSS 0.0.post72 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=0e8682e5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post72
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.TwoPointCentralDifference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.TwoPointCentralDifference</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Two-point central difference to calculate the polarizability</span>
+<span class="sd">and cartesian polarization. For periodic systems.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">MapAtoms</span> <span class="k">as</span> <span class="n">mapatoms</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">Coordinates</span> <span class="k">as</span> <span class="n">coords</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">InputsPreparation</span> <span class="k">as</span> <span class="n">inputs</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">CheckPeriodicvsNonPeriodic</span> <span class="k">as</span> <span class="n">pervsnonper</span>
+
+
+
+<div class="viewcode-block" id="TwoPointCentralDiff">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff">[docs]</a>
+<span class="k">class</span> <span class="nc">TwoPointCentralDiff</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">supercell</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="n">output_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span> <span class="o">=</span> <span class="n">supercell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>	
+        <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_axis_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CartesianPolarization</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Polarizability</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polarizability_pattern</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sign_atom_coord</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">axis_coord</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_periodicity</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_periodicity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup PeriodicvsNonPeriodic class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">check_periodic_non_periodic</span> <span class="o">=</span> <span class="n">pervsnonper</span><span class="o">.</span><span class="n">PeriodicvsNonPeriodic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span> <span class="o">=</span> <span class="n">check_periodic_non_periodic</span><span class="o">.</span><span class="n">check_periodic_vs_non_periodic</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_split_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses lines of text, extracting values and storing them in NumPy arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">larray</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">))</span>
+        <span class="n">values</span><span class="o">=</span><span class="n">larray</span><span class="p">[</span><span class="n">larray</span><span class="o">!=</span><span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="k">def</span> <span class="nf">_unit_cell_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the volume of the unit cell. Since the frozen phonon approximation </span>
+<span class="sd">        does not involve unit cell or geometry optimizations, the volume can be obtained </span>
+<span class="sd">        from any FHI-aims or DFTB+ output file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">myfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;| Unit cell volume&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;Volume:&#39;</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">myfile</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+
+<div class="viewcode-block" id="TwoPointCentralDiff.get_volume">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.get_volume">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves the volume.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">item</span><span class="p">))]</span>
+        <span class="n">first_coord_dir</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">drct</span> <span class="k">for</span> <span class="n">drct</span> <span class="ow">in</span> <span class="n">contents</span> <span class="k">if</span> <span class="n">drct</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Coord&quot;</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">path_output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">first_coord_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_cell_volume</span><span class="p">(</span><span class="n">path_output_file</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;VOLUME: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">volume</span><span class="si">}</span><span class="s1"> A</span><span class="se">\N{SUPERSCRIPT THREE}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_patterns_of_polarizability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Specifies the patterns used to extract polarizability and cartesian polarization </span>
+<span class="sd">        which are retrieved from output files generated by FHIaims and DFTB+ simulations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polarizability_pattern</span> <span class="o">=</span> <span class="s1">&#39;Polarizability&#39;</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="o">=</span> <span class="s1">&#39;Total dipole moment&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="o">=</span>  <span class="s1">&#39;Cartesian Polarization&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polarizability_pattern</span> <span class="o">=</span> <span class="s1">&#39;Static polarisability:&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="o">=</span> <span class="s1">&#39;Dipole moment:&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_find_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drcts</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Searches for specific patterns in FHI-aims and DFTB+ output files</span>
+<span class="sd">        and extracts corresponding values. This method is designed</span>
+<span class="sd">        for retrieving data related to Cartesian polarization</span>
+<span class="sd">        and polarizability calculations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_patterns_of_polarizability</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">CartesianPolarization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s1">&#39;Cartesian Polarization&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">CartesianPolarization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">path_dipole_moment</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="s1">&#39;detailed.out&#39;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_dipole_moment</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ff</span><span class="p">:</span>
+                <span class="n">linesff</span> <span class="o">=</span> <span class="n">ff</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">linesff</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_polarization_pattern</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">CartesianPolarization</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="o">-</span><span class="mi">4</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+                <span class="n">path_aims</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;pbe&#39;</span><span class="p">,</span> <span class="s1">&#39;lda&#39;</span><span class="p">]:</span>
+                <span class="n">drct</span> <span class="o">=</span> <span class="s1">&#39;polarizability&#39;</span>
+                <span class="n">path_aims</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="n">drct</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_aims</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polarizability_pattern</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">Polarizability</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">line</span><span class="p">)[</span><span class="o">-</span><span class="mi">6</span><span class="p">:])</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">path_dftb</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">:</span>
+                <span class="n">drct</span> <span class="o">=</span> <span class="s1">&#39;polarizability&#39;</span>
+                <span class="n">path_dftb</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">drcts</span><span class="p">,</span> <span class="n">drct</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path_dftb</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polarizability_pattern</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">pol1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]))</span>
+                        <span class="n">pol2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">2</span><span class="p">]))</span>
+                        <span class="n">pol3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_line</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">index</span><span class="o">+</span><span class="mi">3</span><span class="p">]))</span>
+
+                        <span class="n">xx</span> <span class="o">=</span> <span class="n">pol1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">yy</span> <span class="o">=</span> <span class="n">pol2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">zz</span> <span class="o">=</span> <span class="n">pol3</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">xy</span> <span class="o">=</span> <span class="n">pol1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">xz</span> <span class="o">=</span> <span class="n">pol1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">yz</span> <span class="o">=</span> <span class="n">pol2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+                        <span class="bp">self</span><span class="o">.</span><span class="n">Polarizability</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">,</span> <span class="n">zz</span><span class="p">,</span> <span class="n">xy</span><span class="p">,</span> <span class="n">xz</span><span class="p">,</span> <span class="n">yz</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Polarizability</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CartesianPolarization</span>
+
+    <span class="k">def</span> <span class="nf">_map_axis_coord</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coord</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the coordinate (x, y, z) for the mapping of equivalent coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">coord</span><span class="o">==</span><span class="s1">&#39;x&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axis_coord</span><span class="o">=</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">coord</span><span class="o">==</span><span class="s1">&#39;y&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axis_coord</span><span class="o">=</span><span class="mi">2</span>
+        <span class="k">elif</span> <span class="n">coord</span><span class="o">==</span><span class="s1">&#39;z&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">axis_coord</span><span class="o">=</span><span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">_assign_axis_to_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigns a coefficient based on the sign provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">sign</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coeff</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">coeff</span>
+
+    <span class="k">def</span> <span class="nf">_subgroups_finite_disp_drct</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identifies pairs of geometry files where the same coordinate has been displaced.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+	
+        <span class="n">drct</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+        <span class="n">contents</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_path</span><span class="p">,</span> <span class="n">item</span><span class="p">))]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">contents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;Coord&#39;</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">drct</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">drct</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">,</span> <span class="n">f</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sign_atom_coord</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">it</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">drct</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">atom_coord1</span> <span class="o">=</span> <span class="n">dirname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">atom_coord2</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">atom_coord1</span> <span class="o">==</span> <span class="n">atom_coord2</span><span class="p">:</span>
+                <span class="n">save</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">item</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sign_atom_coord</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">save</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign_atom_coord</span>
+
+    <span class="k">def</span> <span class="nf">_pol</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disp</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies the two-point central difference method for numerical differentiation.</span>
+<span class="sd">        This method utilizes two structures where the same coordinate has been displaced </span>
+<span class="sd">        to compute the derivative with respect to that coordinate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">c_diff_fraction</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">disp</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subgroups_finite_disp_drct</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sign_atom_coord</span><span class="p">:</span>
+            <span class="n">dir1</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>      <span class="c1"># First directory</span>
+            <span class="n">sign1</span> <span class="o">=</span> <span class="n">dir1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">no_of_element</span> <span class="o">=</span> <span class="n">dir1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_map_axis_coord</span><span class="p">(</span><span class="n">dir1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">])</span> 
+            <span class="n">polarizability1</span><span class="p">,</span> <span class="n">cart_pol1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_pattern</span><span class="p">(</span><span class="n">dir1</span><span class="p">)</span>
+            
+            <span class="n">dir2</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>     <span class="c1"># Second directory</span>
+            <span class="n">sign2</span> <span class="o">=</span> <span class="n">dir2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">polarizability2</span><span class="p">,</span> <span class="n">cart_pol2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_pattern</span><span class="p">(</span><span class="n">dir2</span><span class="p">)</span>
+
+            <span class="n">coeff1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_axis_to_numbers</span><span class="p">(</span><span class="n">sign1</span><span class="p">)</span>
+            <span class="n">coeff2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assign_axis_to_numbers</span><span class="p">(</span><span class="n">sign2</span><span class="p">)</span>
+
+            <span class="c1">#       Polarizability</span>
+            <span class="n">pol_tmp</span> <span class="o">=</span> <span class="n">polarizability1</span> <span class="o">*</span> <span class="n">coeff1</span> <span class="o">*</span> <span class="n">c_diff_fraction</span> <span class="o">+</span> <span class="n">polarizability2</span> <span class="o">*</span> <span class="n">coeff2</span> <span class="o">*</span> <span class="n">c_diff_fraction</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">,[</span><span class="n">pol_tmp</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1">#       Cartesian Polarization</span>
+            <span class="n">cartesian_pol_tmp</span> <span class="o">=</span> <span class="n">cart_pol1</span> <span class="o">*</span> <span class="n">coeff1</span> <span class="o">*</span> <span class="n">c_diff_fraction</span> <span class="o">+</span> <span class="n">cart_pol2</span> <span class="o">*</span> <span class="n">coeff2</span> <span class="o">*</span> <span class="n">c_diff_fraction</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span><span class="p">,[</span><span class="n">cartesian_pol_tmp</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">tmp_element_axis_coord</span> <span class="o">=</span> <span class="p">[</span><span class="n">no_of_element</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis_coord</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">element_axis_coord</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">element_axis_coord</span><span class="p">,</span> <span class="p">[</span><span class="n">tmp_element_axis_coord</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TwoPointCentralDiff.coord_conversion_cartesian_to_fractional">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.coord_conversion_cartesian_to_fractional">[docs]</a>
+    <span class="k">def</span> <span class="nf">coord_conversion_cartesian_to_fractional</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts Cartesian coordinates to fractional coordinates. </span>
+<span class="sd">        Utilizes the ConversionUnitsCoordinates class to perform the conversion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">coordinates_conversion</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">ConversionUnitsCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="n">source_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">coordinates_conversion</span><span class="o">.</span><span class="n">cartesian_to_fractional_FHIaims</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">coordinates_conversion</span><span class="o">.</span><span class="n">cartesian_to_fractional_DFTBplus</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_number_of_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of atoms of the structure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">number_of_atoms</span><span class="p">()</span>
+
+<div class="viewcode-block" id="TwoPointCentralDiff.calculate_pol_cart_pol">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.calculate_pol_cart_pol">[docs]</a>
+    <span class="k">def</span> <span class="nf">calculate_pol_cart_pol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the polarizability and cartesian polarization, utilizing spglibProcessor to map equivalent atoms and coordinates. </span>
+<span class="sd">        If a supercell is specified, adjusts the number of atoms and lines accordingly.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">spglib_processor</span> <span class="o">=</span> <span class="n">mapatoms</span><span class="o">.</span><span class="n">spglibProcessor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="o">=</span> <span class="n">spglib_processor</span><span class="o">.</span><span class="n">prop_equivalent_atoms</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_axis_coord</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">supercell</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                <span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;geometry_backup.in&#39;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                <span class="n">geom_input</span> <span class="o">=</span> <span class="s1">&#39;geo_backup.gen&#39;</span>
+            <span class="n">source_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;vibrations&#39;</span><span class="p">,</span> <span class="n">geom_input</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">GeometryProcessor</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+            <span class="n">number_of_atoms_unit_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_number_of_atoms</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;NUMBER OF ATOMS OF UNIT CELL: </span><span class="si">{</span><span class="n">number_of_atoms_unit_cell</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+            <span class="n">number_of_lines_unit_cell</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">number_of_atoms_unit_cell</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">[:</span><span class="n">number_of_lines_unit_cell</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span><span class="p">[:</span><span class="n">number_of_lines_unit_cell</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TwoPointCentralDiff.pol_cart_pol_processor">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.TwoPointCentralDifference.TwoPointCentralDiff.pol_cart_pol_processor">[docs]</a>
+    <span class="k">def</span> <span class="nf">pol_cart_pol_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Processes the polarizability and cartesian polarization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pol</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pol</span><span class="p">(</span><span class="mf">0.005</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_periodic</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coord_conversion_cartesian_to_fractional</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculate_pol_cart_pol</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pol</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian_pol</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

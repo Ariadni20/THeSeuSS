@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THeSeuSS.EigenvectorsFrequenciesPHONOPY &mdash; THeSeuSS 0.0.post86 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=11155eed" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8775217d"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            THeSeuSS
+              <img src="../../_static/Logo_THeSeuSS.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.0.post86
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installing.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributions &amp; Help</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/modules.html">Module Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">THeSeuSS</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">THeSeuSS.EigenvectorsFrequenciesPHONOPY</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for THeSeuSS.EigenvectorsFrequenciesPHONOPY</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Eigenvectors and eigenvalues from PHONOPY code&#39;&#39;&#39;</span>
+
+<span class="c1">#AUTHOR: Ariadni Boziki</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.linalg</span> <span class="k">as</span> <span class="nn">spl</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">Constants</span> <span class="k">as</span> <span class="n">c</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">SubmitCalculations</span> <span class="k">as</span> <span class="n">submit</span>
+<span class="kn">from</span> <span class="nn">THeSeuSS</span> <span class="kn">import</span> <span class="n">InputsPreparation</span> <span class="k">as</span> <span class="n">inputs</span>
+<span class="kn">from</span> <span class="nn">mendeleev</span> <span class="kn">import</span> <span class="n">element</span>
+
+
+<div class="viewcode-block" id="VibrationalFrequencies">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies">[docs]</a>
+<span class="k">class</span> <span class="nc">VibrationalFrequencies</span><span class="p">():</span>
+
+    <span class="n">GEOMETRY_IN</span> <span class="o">=</span> <span class="s1">&#39;geometry.in&#39;</span>
+    <span class="n">GEO_GEN</span> <span class="o">=</span> <span class="s1">&#39;geo.gen&#39;</span>
+    <span class="n">SO3LR</span> <span class="o">=</span> <span class="s1">&#39;so3lr.xyz&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> 
+        <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">output_file_of_SCFSs</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">dispersion</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">cell_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">restart</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">commands</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">functional</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file_of_SCFSs</span> <span class="o">=</span> <span class="n">output_file_of_SCFSs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span> <span class="o">=</span> <span class="n">dispersion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span> <span class="o">=</span> <span class="n">cell_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="n">restart</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commands</span> <span class="o">=</span> <span class="n">commands</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">functional</span> <span class="o">=</span> <span class="n">functional</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">displacement</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta_forces</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_geometry_processor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_phonopy_calculator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_displacement</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_set_geometry_processor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup the GeometryProcessor class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">VibrationalFrequencies</span><span class="o">.</span><span class="n">GEOMETRY_IN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">VibrationalFrequencies</span><span class="o">.</span><span class="n">GEO_GEN</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="n">geom_input</span> <span class="o">=</span> <span class="n">VibrationalFrequencies</span><span class="o">.</span><span class="n">SO3LR</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">GeometryProcessor</span><span class="p">(</span><span class="n">geom_input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_phonopy_calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup the PhonopyCalculator class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span> <span class="o">=</span> <span class="n">submit</span><span class="o">.</span><span class="n">PhonopyCalculator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_file_of_SCFSs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dispersion</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">commands</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">functional</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_number_of_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of atoms of the structure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">number_of_atoms</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_atom_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns both the atom type for each atom </span>
+<span class="sd">        and a corresponding numerical identifier for each atom type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry_processor</span><span class="o">.</span><span class="n">read_the_atom_type</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_forces_output_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drct</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the path to the output file containing forces for a specific calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">force_identifier</span><span class="p">(</span><span class="n">drct</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_forces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span> <span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the forces from the FHIaims output and results.tag DFTB+ file </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">read_forces_from_output</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">read_forces_from_files_ML</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_sorted_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the sorted directories in the current directory that contain the substring &#39;Coord&#39;, </span>
+<span class="sd">        based on the numeric value in their names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phonopy_calculator</span><span class="o">.</span><span class="n">sort_directories</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set displacement value based on code.</span>
+<span class="sd">        For &#39;aims&#39;, the displacement is set to 0.01, while for &#39;dftb+&#39;, it is set to 0.005.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">displacement</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">displacement</span> <span class="o">=</span> <span class="mf">0.005</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">displacement</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+    <span class="k">def</span> <span class="nf">_set_forces_dictionary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set up a dictionary containing forces data for each atom.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_number_of_atoms</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;natom&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">,</span>
+                <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sorted_directories</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conts</span><span class="p">:</span>
+            <span class="n">output_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forces_output_path</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_forces</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+
+            <span class="n">atom_number</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>  
+            <span class="n">atom_axis</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+                <span class="n">disp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">displacement</span>
+            <span class="k">elif</span> <span class="n">i</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;-&#39;</span><span class="p">:</span>
+                <span class="n">disp</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">displacement</span>
+
+            <span class="n">entry</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s1">&#39;atom_number&#39;</span><span class="p">:</span> <span class="n">atom_number</span><span class="p">,</span>
+                    <span class="s1">&#39;atom_axis&#39;</span><span class="p">:</span> <span class="n">atom_axis</span><span class="p">,</span>
+                    <span class="s1">&#39;disp&#39;</span><span class="p">:</span> <span class="n">disp</span><span class="p">,</span>
+                    <span class="s1">&#39;forces&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">forces</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_group_dispplacement_forces_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the difference between the forces applied to atoms along the same axis and with opposite displacements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_forces_dictionary</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">delta_forces</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;natom&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span><span class="p">,</span>
+                <span class="s1">&#39;atoms&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+        <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom_i</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">atom_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atoms</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:],</span> <span class="n">start</span><span class="o">=</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">atom_i</span><span class="p">[</span><span class="s1">&#39;atom_number&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_j</span><span class="p">[</span><span class="s1">&#39;atom_number&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">atom_i</span><span class="p">[</span><span class="s1">&#39;atom_axis&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_j</span><span class="p">[</span><span class="s1">&#39;atom_axis&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+                        <span class="n">forces_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.01</span><span class="p">))</span>
+                        <span class="n">forces_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+                        <span class="n">forces_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.005</span><span class="p">))</span>
+                        <span class="n">forces_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">0.005</span><span class="p">))</span>
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+                        <span class="n">forces_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.01</span><span class="p">))</span>
+                        <span class="n">forces_neg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="n">atom</span><span class="p">[</span><span class="s1">&#39;forces&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="p">(</span><span class="n">atom_i</span><span class="p">,</span> <span class="n">atom_j</span><span class="p">)</span> <span class="k">if</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;disp&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">0.01</span><span class="p">))</span>
+                    <span class="n">delta_forces_entry</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s1">&#39;number&#39;</span><span class="p">:</span> <span class="n">atom_i</span><span class="p">[</span><span class="s1">&#39;atom_number&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="n">atom_i</span><span class="p">[</span><span class="s1">&#39;atom_axis&#39;</span><span class="p">],</span>
+                        <span class="s1">&#39;difference&#39;</span><span class="p">:</span> <span class="n">forces_pos</span> <span class="o">-</span> <span class="n">forces_neg</span>
+                    <span class="p">}</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">delta_forces</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">delta_forces_entry</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_forces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the mass matrix product based on the atomic weights of atoms involved in the force calculation.</span>
+<span class="sd">        Calculates the reciprocal square root of the mass product for each pair of atoms.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">numbers</span><span class="p">,</span> <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_atom_type</span><span class="p">()</span>
+        <span class="n">masses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+            <span class="n">current_element</span> <span class="o">=</span> <span class="n">element</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
+            <span class="n">current_element</span><span class="o">.</span><span class="n">atomic_weight</span>
+            <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_element</span><span class="o">.</span><span class="n">atomic_weight</span><span class="p">)</span>
+
+        <span class="n">num_total_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_total_coordinates</span><span class="p">,</span> <span class="n">num_total_coordinates</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">atom1</span> <span class="ow">in</span> <span class="n">d_forces</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">atom2</span> <span class="ow">in</span> <span class="n">d_forces</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]:</span>
+                <span class="n">atom1_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom1</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">])</span>
+                <span class="n">atom2_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">])</span>
+                <span class="n">mass_product</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">atom1_index</span><span class="p">]</span><span class="o">*</span><span class="n">masses</span><span class="p">[</span><span class="n">atom2_index</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom1</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
+                <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">atom2</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">3</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">mass_product</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_generation_of_fc_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dforces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the force constants matrix based on the differences in forces between pairs of atoms with opposite displacements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">num_total_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">force_constants</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_total_coordinates</span><span class="p">,</span> <span class="n">num_total_coordinates</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dforces</span><span class="p">[</span><span class="s1">&#39;atoms&#39;</span><span class="p">]):</span>
+            <span class="n">difference</span> <span class="o">=</span> <span class="n">atom</span><span class="p">[</span><span class="s1">&#39;difference&#39;</span><span class="p">]</span>
+            <span class="n">difference_row</span> <span class="o">=</span> <span class="n">difference</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">force_constants</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">difference_row</span>
+
+        <span class="k">return</span> <span class="n">force_constants</span>
+
+    <span class="k">def</span> <span class="nf">_division_of_fc_by_displacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_constants</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Divides the force constants matrix by twice the displacement value. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">force_constants</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">displacement</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">force_constants</span>
+
+    <span class="k">def</span> <span class="nf">_symmetrization_of_fc_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_constants</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Symmetrizes the force constants matrix by averaging the non-diagonal </span>
+<span class="sd">        elements with their corresponding symmetric elements. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">num_total_coordinates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">no_of_atoms</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">symmetric_elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_total_coordinates</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_total_coordinates</span><span class="p">):</span>
+
+                <span class="n">average</span> <span class="o">=</span> <span class="p">(</span><span class="n">force_constants</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">force_constants</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">force_constants</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span>
+                <span class="n">force_constants</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">average</span>
+
+        <span class="k">return</span> <span class="n">force_constants</span>
+
+    <span class="k">def</span> <span class="nf">_mass_weighted_hessian</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the mass-weighted Hessian matrix / Dynamical matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_group_dispplacement_forces_dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mass_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_forces</span><span class="p">)</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generation_of_fc_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_forces</span><span class="p">)</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_division_of_fc_by_displacement</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+        <span class="n">fc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_symmetrization_of_fc_matrix</span><span class="p">(</span><span class="n">fc</span><span class="p">)</span>
+
+        <span class="n">dynamical_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">fc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dynamical_matrix</span>
+
+<div class="viewcode-block" id="VibrationalFrequencies.read_eig_vec_phonopy">
+<a class="viewcode-back" href="../../api/THeSeuSS.html#THeSeuSS.EigenvectorsFrequenciesPHONOPY.VibrationalFrequencies.read_eig_vec_phonopy">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_eig_vec_phonopy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hessian</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span><span class="o">-&gt;</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns eigenvalues, eigenvectors and in turn frequencies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">eigvals</span><span class="p">,</span> <span class="n">eigvecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">hessian</span><span class="p">)</span>
+
+        <span class="c1">#   Different method for the diagonalization. The results of both methods </span>
+        <span class="c1">#   are almost identical</span>
+        <span class="c1">#   eigvals_test, eigvecs_test = spl.eigh(hessian_mass_weighted)</span>
+
+        <span class="n">frequencies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigvals</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">eigvals</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;aims&#39;</span><span class="p">:</span>
+            <span class="n">conversion_factor_to_THz</span> <span class="o">=</span> <span class="mf">15.633302</span>
+            <span class="n">conversion_factor_to_cm_minus_1</span> <span class="o">=</span> <span class="mf">15.633302</span><span class="o">*</span><span class="mf">33.356</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;dftb+&#39;</span><span class="p">:</span>
+            <span class="n">conversion_factor_to_THz</span> <span class="o">=</span> <span class="mf">154.10794</span>
+            <span class="n">conversion_factor_to_cm_minus_1</span> <span class="o">=</span> <span class="mf">154.10794</span><span class="o">*</span><span class="mf">33.356</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="s1">&#39;so3lr&#39;</span><span class="p">:</span>
+            <span class="n">conversion_factor_to_THz</span> <span class="o">=</span> <span class="mf">15.633302</span>
+            <span class="n">conversion_factor_to_cm_minus_1</span> <span class="o">=</span> <span class="mf">15.633302</span><span class="o">*</span><span class="mf">33.356</span>
+
+        <span class="n">frequencies_THz</span> <span class="o">=</span> <span class="n">frequencies</span> <span class="o">*</span> <span class="n">conversion_factor_to_THz</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;FREQUENCIES (THz)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">frequencies_THz</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">frequencies_in_cm_minus_1</span> <span class="o">=</span> <span class="n">frequencies</span> <span class="o">*</span> <span class="n">conversion_factor_to_cm_minus_1</span>
+
+        <span class="k">return</span> <span class="n">eigvecs</span><span class="p">,</span> <span class="n">eigvals</span><span class="p">,</span> <span class="n">frequencies_in_cm_minus_1</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Ariadni20.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
